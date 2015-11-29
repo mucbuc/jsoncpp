@@ -13,12 +13,12 @@ struct json_impl
     : m_properties( init )
     {}
     
-    bool has( const string_type & key) const
+    bool has_own_property( const string_type & key) const
     {
         return m_properties.find( key ) != m_properties.end();
     }
     
-    U get( const string_type & key) const
+    const U & get_property( const string_type & key) const
     {
         auto i( m_properties.find(key) );
         if (i == m_properties.end())

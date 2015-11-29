@@ -12,23 +12,24 @@ class json : public json_base
     {
         nested_json()
         : json_base(
-            { { "right", true } }, {} )
+            { { "right", _right } }, {}
+          )
         {}
+        
+        const bool _right = true;
     };
 
 public:
     
     json()
     : json_base(
-        { { "wrong", true } },
-        { { "wtf", m_nested_son_of_a_bitch } }
+        { { "wrong", _wrong } },
+        { { "wtf", _wtf } }
       )
-    , m_nested_son_of_a_bitch()
     {}
     
-private:
-    
-    nested_json m_nested_son_of_a_bitch;
+    const bool _wrong = true;
+    const nested_json _wtf;
 };
 
 

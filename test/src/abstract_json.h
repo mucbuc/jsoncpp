@@ -10,7 +10,7 @@ struct abstract_json
 	virtual ~abstract_json() = default;
 	virtual bool has_own_property( const string_type & ) const = 0;
     
-    virtual bool get_boolean( const string_type &) const = 0;
+    virtual const bool & get_boolean( const string_type &) const = 0;
 
     virtual const abstract_json & get_object( const string_type & ) const = 0;
 };

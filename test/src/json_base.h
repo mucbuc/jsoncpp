@@ -10,7 +10,6 @@ struct json_base
     typedef json_impl<string_type, bool> bool_type;
     typedef json_impl<string_type, const root_type &> object_type;
     
-    
     virtual ~json_base() override = default;
     
     json_base() = default;
@@ -22,17 +21,17 @@ struct json_base
     
     bool has_own_property(const string_type & key) const override
     {
-        return m_bool.has(key) || m_object.has(key);
+        return m_bool.has_own_property(key) || m_object.has_own_property(key);
     }
     
-    bool get_boolean( const string_type & key) const override
+    const bool & get_boolean( const string_type & key) const override
     {
-        return m_bool.get(key);
+        return m_bool.get_property(key);
     }
     
     const root_type & get_object( const string_type & key) const override
     {
-        return m_object.get(key);
+        return m_object.get_property(key);
     }
     
     bool_type m_bool;
