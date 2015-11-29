@@ -14,9 +14,10 @@ class json : public json_base
         : json_base(
             { { "right", _right } }, {}
           )
+        , _right( true )
         {}
         
-        const bool _right = true;
+        const bool _right;
     };
 
 public:
@@ -26,9 +27,11 @@ public:
         { { "wrong", _wrong } },
         { { "wtf", _wtf } }
       )
+    , _wrong( true )
+    , _wtf()
     {}
     
-    const bool _wrong = true;
+    const bool _wrong;
     const nested_json _wtf;
 };
 
