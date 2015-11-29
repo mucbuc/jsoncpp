@@ -12,7 +12,7 @@ class json : public json_base
     {
         nested_json()
         : json_base(
-            { { "right", _right } }, {}
+                    { { "right", _right } }, {}, {}, {}
           )
         , _right( true )
         {}
@@ -25,14 +25,18 @@ public:
     json()
     : json_base(
         { { "wrong", _wrong } },
-        { { "wtf", _wtf } }
+        { { "wtf", _wtf } },
+        {},
+        { { "three", _three } }
       )
     , _wrong( true )
     , _wtf()
+    , _three( 3 )
     {}
     
     const bool _wrong;
     const nested_json _wtf;
+    const int _three;
 };
 
 
@@ -58,6 +62,18 @@ int main(int argc, const char * argv[])
 
     ASSERT( instance._wrong == instance.get_boolean( "wrong" ) );
     ASSERT( instance._wtf._right ==  wtf.get_boolean("right") );
+    
+    
+    ASSERT( instance.get_number( "three" ) == 3 );
+    caught = false;
+    try {
+        wtf.get_number( "three" );
+    }
+    catch( ... )
+    {
+        caught = true;
+    }
+    ASSERT( caught );
     
     return 0;
 }
