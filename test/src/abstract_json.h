@@ -14,7 +14,7 @@ struct abstract_json
     virtual const abstract_json & get_object( const string_type & ) const = 0;
     virtual const string_type & get_string( const string_type &) const = 0;
     virtual const number_type & get_number( const string_type &) const = 0;
+    virtual void get_null( const string_type &) const = 0;
 };
-
 
 #endif // ABSTRACT_JSON_INCLUDE_GUARD_32143RGWDRWE

@@ -1,5 +1,6 @@
 #include <iostream>
 #include <map>
+#include <vector>
 
 #include "abstract_json.h"
 #include "json_base.h"
@@ -12,12 +13,18 @@ class json : public json_base
     {
         nested_json()
         : json_base(
-                    { { "right", _right } }, {}, {}, {}
+            { { "right", _right } },
+            {},
+            {},
+            {},
+            {}
           )
         , _right( true )
+        , _strings( { "hello", "arrays" } )
         {}
         
         const bool _right;
+        std::vector< string_type > _strings;
     };
 
 public:
@@ -27,7 +34,8 @@ public:
         { { "wrong", _wrong } },
         { { "wtf", _wtf } },
         {},
-        { { "three", _three } }
+        { { "three", _three } },
+        {}
       )
     , _wrong( true )
     , _wtf()
