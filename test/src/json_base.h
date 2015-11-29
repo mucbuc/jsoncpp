@@ -7,7 +7,7 @@ struct json_base
 : public abstract_json< std::string, int >
 {
     typedef abstract_json< std::string, int > root_type;
-    typedef json_impl<string_type, bool> bool_type;
+    typedef json_impl<string_type, const bool &> bool_type;
     typedef json_impl<string_type, const root_type &> object_type;
     
     virtual ~json_base() override = default;

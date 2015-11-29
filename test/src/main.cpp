@@ -39,19 +39,22 @@ int main(int argc, const char * argv[])
     ASSERT( instance.has_own_property( "wrong" ) );
     ASSERT( instance.get_boolean( "wrong" ) );
     
-     bool caught( false );
-     try {
-         instance.get_boolean( "wtf " );
-     }
-     catch(...) {
-         caught = true;
-     }
-     ASSERT( caught );
+    bool caught( false );
+    try {
+        instance.get_boolean( "wtf " );
+    }
+    catch(...) {
+        caught = true;
+    }
+    ASSERT( caught );
 
     const auto & wtf( instance.get_object( "wtf" ) );
     ASSERT( !wtf.has_own_property( "wrong" ) );
     ASSERT( wtf.has_own_property( "right" ) );
     ASSERT( wtf.get_boolean("right") );
 
+    ASSERT( instance._wrong == instance.get_boolean( "wrong" ) );
+    ASSERT( instance._wtf._right ==  wtf.get_boolean("right") );
+    
     return 0;
 }
