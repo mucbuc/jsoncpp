@@ -1,0 +1,8 @@
+{
+	"sources": [
+		"src/main.cpp",
+		"src/abstract_json.h",
+		"src/json_base.h",
+		"src/json_impl.h"
+	]
+}
