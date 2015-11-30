@@ -9,8 +9,7 @@ struct abstract_json
     typedef V handler_type;
 
 	virtual ~abstract_json() = default;
-	virtual bool has_own_property(const string_type &) const = 0;
-    virtual void traverse(handler_type &) = 0;
+	virtual void traverse(handler_type &) const = 0;
     
 };
 

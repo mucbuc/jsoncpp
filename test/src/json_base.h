@@ -37,16 +37,7 @@ struct json_base
     , m_nulls( nulls )
     {}
     
-    bool has_own_property(const string_type & key) const override
-    {
-        return m_bool.has_own_property(key)
-            || m_object.has_own_property(key)
-            || m_strings.has_own_property(key)
-            || m_numbers.has_own_property(key)
-            || m_nulls.count(key);
-    }
-    
-    virtual void traverse(handler_type & h) override
+    virtual void traverse(handler_type & h) const override
     {
         m_bool.traverse( h );
         m_object.traverse( h );

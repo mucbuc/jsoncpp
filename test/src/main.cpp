@@ -32,16 +32,10 @@ class json : public json_base<T>
         , _strings( { "hello", "arrays" } )
         {}
         
-        virtual void traverse(handler_type & h) override
+        virtual void traverse(handler_type & h) const override
         {
             h( "strings", _strings );
             base_type::traverse(h);
-        }
-        
-        virtual bool has_own_property(const string_type & key) const override
-        {
-            return  key == "strings"
-                ||  base_type::has_own_property(key);
         }
         
         const bool _right;
@@ -61,20 +55,13 @@ public:
     , _wrong( true )
     , _wtf()
     , _three( 3 )
+    , _arr( 3, false, "something" )
     {}
     
-    virtual void traverse(handler_type & h) override
+    virtual void traverse(handler_type & h) const override
     {
-        h( "wtf", _wtf );
         h( "arr", _arr );
         base_type::traverse(h);
-    }
-    
-    virtual bool has_own_property(const string_type & key) const override
-    {
-        return  key == "wtf"
-            ||  key == "arr"
-            ||  base_type::has_own_property( key );
     }
     
     const bool _wrong;
@@ -90,21 +77,56 @@ struct handler_type
     {
         std::cout << t << " " << typeid(u).name() << std::endl;
     }
+    
+    template<class T, class U, class V, class W>
+    void operator()(T t, const abstract_json<U, V, W> & u)
+    {
+        std::cout << t << " " << "object:" << std::endl;
+        u.traverse( * this );
+        std::cout << "end:" << std::endl;
+        
+    }
+    
+    template<class T>
+    void operator()(T t, const std::tuple< int, bool, std::string > & u)
+    {
+        std::cout << t << " " << "tuple<int, bool, string>" << std::endl;
+    }
+    
+    template<class T>
+    void operator()(T t, const std::tuple< std::string, std::string > & u)
+    {
+        std::cout << t << " " << "tuple<string, string>" << std::endl;
+    }
+    
+    template<class T>
+    void operator()(T t, const std::string & u)
+    {
+        std::cout << t << " " << "string:" << u << std::endl;
+    }
+    
+    template<class T>
+    void operator()(T t, const int & u)
+    {
+        std::cout << t << " " << "int:" << u << std::endl;
+    }
+    
+    template<class T>
+    void operator()(T t, const bool & u)
+    {
+        std::cout << t << " " << "bool:" << (u ? "true" : "false") << std::endl;
+    }
 };
 
 
 int main(int argc, const char * argv[])
 {
     json<handler_type> instance;
-    ASSERT( instance.has_own_property( "wrong" ) );
-    ASSERT( instance.has_own_property( "wtf" ) );
-    ASSERT( instance._wtf.has_own_property( "right" ) );
+    ASSERT( instance._wrong );
+    ASSERT( instance._wtf._right );
     
     handler_type handler;
     instance.traverse( handler );
-
-    ASSERT( instance._wrong );
-    ASSERT( instance._wtf._right );
     
     return 0;
 }
