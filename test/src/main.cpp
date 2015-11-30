@@ -75,54 +75,59 @@ struct handler_type
     template<class T, class U>
     void operator()(T t, const U & u)
     {
-        std::cout << t << " " << typeid(u).name() << std::endl;
+        ASSERT( false );
     }
     
     template<class T, class U, class V, class W>
     void operator()(T t, const abstract_json<U, V, W> & u)
     {
-        std::cout << t << " " << "object:" << std::endl;
-        u.traverse( * this );
-        std::cout << "end:" << std::endl;
-        
+        ++m_abstract_counter;
+        u.traverse(* this);
     }
     
     template<class T>
     void operator()(T t, const std::tuple< int, bool, std::string > & u)
     {
-        std::cout << t << " " << "tuple<int, bool, string>" << std::endl;
+        ++m_tuple_int_bool_string_counter;
     }
     
     template<class T>
     void operator()(T t, const std::tuple< std::string, std::string > & u)
     {
-        std::cout << t << " " << "tuple<string, string>" << std::endl;
+        ++m_tuple_string_string_counter;
     }
     
     template<class T>
     void operator()(T t, const std::string & u)
     {
-        std::cout << t << " " << "string:" << u << std::endl;
+        m_strings[t] = u;
     }
     
     template<class T>
     void operator()(T t, const int & u)
     {
-        std::cout << t << " " << "int:" << u << std::endl;
+        m_ints[t] = u;
     }
     
     template<class T>
     void operator()(T t, const bool & u)
     {
-        std::cout << t << " " << "bool:" << (u ? "true" : "false") << std::endl;
+        m_bools[t] = u;
     }
-    
     
     template<class T>
     void operator()(T t, const json_null & u)
     {
-        std::cout << t << " " << "null:" << std::endl;
+        m_nulls.insert( t );
     }
+    
+    std::set< std::string > m_nulls;
+    std::map< std::string, bool > m_bools;
+    std::map< std::string, int > m_ints;
+    std::map< std::string, std::string > m_strings;
+    unsigned m_abstract_counter = 0;
+    unsigned m_tuple_string_string_counter = 0;
+    unsigned m_tuple_int_bool_string_counter = 0;
 };
 
 
@@ -134,6 +139,14 @@ int main(int argc, const char * argv[])
     
     handler_type handler;
     instance.traverse( handler );
+    
+    ASSERT( handler.m_bools["right"] );
+    ASSERT( handler.m_bools["wrong"] );
+    ASSERT( handler.m_ints["three"] == 3 );
+    ASSERT( handler.m_abstract_counter == 1 );
+    ASSERT( handler.m_tuple_int_bool_string_counter == 1 );
+    ASSERT( handler.m_tuple_string_string_counter == 1 );
+    ASSERT( handler.m_nulls.count( "zippo" ) );
     
     return 0;
 }
