@@ -28,6 +28,15 @@ struct json_impl
         return i->second;
     }
     
+    template<class V>
+    void traverse(V & handler)
+    {
+        for( auto i : m_properties )
+        {
+            handler( i.first, i.second );
+        }
+    }
+    
 private:
     
     map_type m_properties;

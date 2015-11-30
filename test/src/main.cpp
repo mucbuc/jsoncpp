@@ -1,18 +1,27 @@
 #include <iostream>
 #include <map>
 #include <vector>
+#include <typeinfo>
 
 #include "abstract_json.h"
 #include "json_base.h"
 
 #include "test.h"
 
-class json : public json_base
-{   
-    struct nested_json : json_base
+template<class T>
+class json : public json_base<T>
+{
+    typedef json_base<T> base_type;
+    
+    using typename base_type::string_type;
+    using typename base_type::number_type;
+    using typename base_type::handler_type;
+    
+    struct nested_json : json_base<T>
     {
+        typedef json_base<T> base_type;
         nested_json()
-        : json_base(
+        : base_type(
             { { "right", _right } },
             {},
             {},
@@ -23,14 +32,26 @@ class json : public json_base
         , _strings( { "hello", "arrays" } )
         {}
         
+        virtual void traverse(handler_type & h) override
+        {
+            h( "strings", _strings );
+            base_type::traverse(h);
+        }
+        
+        virtual bool has_own_property(const string_type & key) const override
+        {
+            return  key == "strings"
+                ||  base_type::has_own_property(key);
+        }
+        
         const bool _right;
-        std::vector< string_type > _strings;
+        const std::tuple< string_type, string_type > _strings;
     };
 
 public:
     
     json()
-    : json_base(
+    : json_base<T>(
         { { "wrong", _wrong } },
         { { "wtf", _wtf } },
         {},
@@ -42,46 +63,48 @@ public:
     , _three( 3 )
     {}
     
+    virtual void traverse(handler_type & h) override
+    {
+        h( "wtf", _wtf );
+        h( "arr", _arr );
+        base_type::traverse(h);
+    }
+    
+    virtual bool has_own_property(const string_type & key) const override
+    {
+        return  key == "wtf"
+            ||  key == "arr"
+            ||  base_type::has_own_property( key );
+    }
+    
     const bool _wrong;
     const nested_json _wtf;
     const int _three;
+    const std::tuple< int, bool, string_type > _arr;
+};
+
+struct handler_type
+{
+    template<class T, class U>
+    void operator()(T t, const U & u)
+    {
+        std::cout << t << " " << typeid(u).name() << std::endl;
+    }
 };
 
 
 int main(int argc, const char * argv[])
 {
-    json instance;
+    json<handler_type> instance;
     ASSERT( instance.has_own_property( "wrong" ) );
-    ASSERT( instance.get_boolean( "wrong" ) );
+    ASSERT( instance.has_own_property( "wtf" ) );
+    ASSERT( instance._wtf.has_own_property( "right" ) );
     
-    bool caught( false );
-    try {
-        instance.get_boolean( "wtf " );
-    }
-    catch(...) {
-        caught = true;
-    }
-    ASSERT( caught );
+    handler_type handler;
+    instance.traverse( handler );
 
-    const auto & wtf( instance.get_object( "wtf" ) );
-    ASSERT( !wtf.has_own_property( "wrong" ) );
-    ASSERT( wtf.has_own_property( "right" ) );
-    ASSERT( wtf.get_boolean("right") );
-
-    ASSERT( instance._wrong == instance.get_boolean( "wrong" ) );
-    ASSERT( instance._wtf._right ==  wtf.get_boolean("right") );
-    
-    
-    ASSERT( instance.get_number( "three" ) == 3 );
-    caught = false;
-    try {
-        wtf.get_number( "three" );
-    }
-    catch( ... )
-    {
-        caught = true;
-    }
-    ASSERT( caught );
+    ASSERT( instance._wrong );
+    ASSERT( instance._wtf._right );
     
     return 0;
 }

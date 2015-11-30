@@ -5,10 +5,15 @@
 
 #include "json_impl.h"
 
+template<class T>
 struct json_base
-: public abstract_json< std::string, int >
+: public abstract_json< std::string, int, T >
 {
-    typedef abstract_json< std::string, int > root_type;
+    typedef abstract_json< std::string, int, T > root_type;
+    using typename root_type::string_type;
+    using typename root_type::number_type;
+    using typename root_type::handler_type;
+    
     typedef json_impl<string_type, const bool &> bool_type;
     typedef json_impl<string_type, const root_type &> object_type;
     typedef json_impl<string_type, const string_type &> strings_type;
@@ -19,10 +24,10 @@ struct json_base
     
     json_base() = default;
     
-    json_base(  const bool_type::map_type & bool_init,
-                const object_type::map_type & object_init,
-                const strings_type::map_type & strings,
-                const numbers_type::map_type & numbers,
+    json_base(  const typename bool_type::map_type & bool_init,
+                const typename object_type::map_type & object_init,
+                const typename strings_type::map_type & strings,
+                const typename numbers_type::map_type & numbers,
                 const nulls_type & nulls
               )
     : m_bool( bool_init )
@@ -41,34 +46,18 @@ struct json_base
             || m_nulls.count(key);
     }
     
-    virtual void get_null( const string_type & key) const override
+    virtual void traverse(handler_type & h) override
     {
-        if (!m_nulls.count(key))
-        {
-            throw stderr;
+        m_bool.traverse( h );
+        m_object.traverse( h );
+        m_strings.traverse( h );
+        m_numbers.traverse( h );
+        for( auto i : m_nulls ) {
+            h( i, nullptr );
         }
     }
-    
-    const bool & get_boolean( const string_type & key) const override
-    {
-        return m_bool.get_property(key);
-    }
-    
-    const root_type & get_object( const string_type & key) const override
-    {
-        return m_object.get_property(key);
-    }
-    
-    const string_type & get_string( const string_type & key ) const override
-    {
-        return m_strings.get_property(key);
-    }
-    
-    const number_type & get_number( const string_type & key ) const override
-    {
-        return m_numbers.get_property(key);
-    }
-    
+
+private:
     bool_type m_bool;
     object_type m_object;
     strings_type m_strings;
