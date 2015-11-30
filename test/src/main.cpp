@@ -26,7 +26,7 @@ class json : public json_base<T>
             {},
             {},
             {},
-            {}
+            { "zippo" }
           )
         , _right( true )
         , _strings( { "hello", "arrays" } )
@@ -115,6 +115,13 @@ struct handler_type
     void operator()(T t, const bool & u)
     {
         std::cout << t << " " << "bool:" << (u ? "true" : "false") << std::endl;
+    }
+    
+    
+    template<class T>
+    void operator()(T t, const json_null & u)
+    {
+        std::cout << t << " " << "null:" << std::endl;
     }
 };
 

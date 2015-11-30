@@ -13,4 +13,6 @@ struct abstract_json
     
 };
 
+struct json_null {};
+
 #endif // ABSTRACT_JSON_INCLUDE_GUARD_32143RGWDRWE

@@ -44,7 +44,7 @@ struct json_base
         m_strings.traverse( h );
         m_numbers.traverse( h );
         for( auto i : m_nulls ) {
-            h( i, nullptr );
+            h( i, json_null{} );
         }
     }
 
