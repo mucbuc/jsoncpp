@@ -8,24 +8,19 @@ struct json_impl
     typedef std::map< string_type, U > map_type;
     
     json_impl() = default;
+    ~json_impl() = default;
     
     json_impl(const map_type & init)
     : m_properties( init )
     {}
     
-    bool has( const string_type & key) const
+    template<class V>
+    void traverse(V & handler) const
     {
-        return m_properties.find( key ) != m_properties.end();
-    }
-    
-    U get( const string_type & key) const
-    {
-        auto i( m_properties.find(key) );
-        if (i == m_properties.end())
+        for( auto i : m_properties )
         {
-            throw stderr;
+            handler( i.first, i.second );
         }
-        return i->second;
     }
     
 private:
