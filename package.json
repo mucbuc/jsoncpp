@@ -1,0 +1,27 @@
+{
+  "name": "jsoncpp",
+  "version": "0.0.0",
+  "description": "json to cpp",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "node test/test.js; node test2/test.js;"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mucbuc/jsoncpp.git"
+  },
+  "author": "",
+  "license": "GPL-2.0",
+  "bugs": {
+    "url": "https://github.com/mucbuc/jsoncpp/issues"
+  },
+  "homepage": "https://github.com/mucbuc/jsoncpp#readme",
+  "dependencies": {
+    "tape": "*",
+    "traverjs": "*",
+    "expector": "*"
+  }
+}
