@@ -1,40 +1,48 @@
-var traverse = require( 'traverjs' );
+var traverse = require( 'traverjs' )
+  , util = require( 'util' );
 
-function processJSON(data) {
+function processJSON(json, name) {
 
-	traverse( JSON.parse( data.toString() ), function(o, next) {
-		var name = Object.keys(o)[0]
-		  , value = o[name]
-		  , type = typeof value;
-		if (type == 'object') {
-			if (Array.isArray(value)) {
-				type = 'array';
-			} 
-			else if (value == null) {
-				type = 'null';
-			}
-		}
-		switch(type) {
-			case 'string':
-			break;
-			case 'number':
-			break;
-			case 'boolean':
-			break;
-			case 'null':
-			break;
-			case 'object': 
-			break;
-			case 'array':
-			break;
-		}
+    var result = {
+            "null": [],
+            "boolean": [],
+            number: [],
+            string: [],
+            object: [],
+            array: []
+          };
 
-		console.log( name, value, type );
-		next();
-	} )
-	.then( function() {
-		t.end();
-	});
+    traverse( json, function(o, next) {
+        var name = Object.keys(o)[0]
+          , value = o[name]
+          , type = typeof value
+          , info = '';
+        
+        if (type == 'object') {
+            if (Array.isArray(value)) {
+                type = 'array';
+            } 
+            else if (value == null) {
+                type = 'null';
+            }
+        }
+        info = { name: name, value: value };
+        console.log( info, type );
+        result[type] += info;
+        next();
+    } )
+    .then( function() {
+        traverse( result, function( ele, next ) {
+            traverse( ele, function( inside, inext) {
+                console.log( '*', inside );
+                inext();
+            })
+            .then( next );
+        } )
+        .then( function() {
+            t.end();
+        });
+    });
 }
 
 module.exports = processJSON;
