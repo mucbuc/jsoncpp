@@ -8,6 +8,6 @@ var test = require( 'tape' )
 test( 'basic', function(t) {
 	fs.readFile( './data.json', function(err, data) {
 		if (err) throw err;
-		processJSON( data );
+		processJSON( JSON.parse( data.toString() ) );
 	});
 });

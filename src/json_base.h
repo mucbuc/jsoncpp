@@ -3,6 +3,7 @@
 
 #include <set>
 
+#include "abstract_json.h"
 #include "json_impl.h"
 
 template<class T>
