@@ -4,7 +4,7 @@ var test = require( 'tape' )
   , Expector = require( 'expector' ).SeqExpector
   , fs = require( 'fs' )
   , util = require( 'util' )
-  , processJSON = require( '../index' );
+  , processJSON = require( '../bin/process_json' );
 
 test( 'basic', function(t) {
 	fs.readFile( './data.json', function(err, data) {

@@ -1,41 +1,21 @@
-var traverse = require( 'traverjs' )
-  , Promise = require( 'promise' );
+#!/usr/bin/env node
 
-function processJSON(json, name) {
+var assert = require( 'assert' )
+  , fs = require( 'fs' )
+  , processJSON = require( './bin/process_json' )
+  , writeCPP = require( './bin/write_cpp' )
 
-    return new Promise( function(resolve, reject) {
+assert( typeof processJSON !== 'undefined' );
+assert( typeof writeCPP !== 'undefined' );
 
-
-        var result = {
-                "null": [],
-                "boolean": [],
-                number: [],
-                string: [],
-                object: [],
-                array: []
-              };
-
-        traverse( json, function(o, next) {
-            var name = Object.keys(o)[0]
-              , value = o[name]
-              , type = typeof value;
-            
-            if (type == 'object') {
-                if (Array.isArray(value)) {
-                    type = 'array';
-                } 
-                else if (value == null) {
-                    type = 'null';
-                }
-            }
-            result[type].push({name: name, value: value});
-            next();
-        } )
-        .then( function() {
-            resolve(result);
-        })
-        .catch( reject );
-    });
+function translate(pathJSON) {
+	fs.readFile(pathJSON, function(err, data) {
+		if (err) throw err;
+		processJSON(JSON.parse(data.toString()))
+		.then( function(result) {
+			writeCPP(result);
+		});
+	});
 }
 
-module.exports = processJSON;
+translate( './test2/data.json' );
