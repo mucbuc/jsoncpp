@@ -15,8 +15,7 @@ function processJSON(json, name) {
     traverse( json, function(o, next) {
         var name = Object.keys(o)[0]
           , value = o[name]
-          , type = typeof value
-          , info = '';
+          , type = typeof value;
         
         if (type == 'object') {
             if (Array.isArray(value)) {
@@ -26,22 +25,12 @@ function processJSON(json, name) {
                 type = 'null';
             }
         }
-        info = { name: name, value: value };
-        console.log( info, type );
-        result[type] += info;
+        result[type].push({name: name, value: value});
         next();
     } )
     .then( function() {
-        traverse( result, function( ele, next ) {
-            traverse( ele, function( inside, inext) {
-                console.log( '*', inside );
-                inext();
-            })
-            .then( next );
-        } )
-        .then( function() {
-            t.end();
-        });
+        console.log( util.inspect( result ) );
+	t.end();
     });
 }
 
