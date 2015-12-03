@@ -3,7 +3,6 @@
 #include <vector>
 #include <typeinfo>
 
-#include "abstract_json.h"
 #include "json_base.h"
 
 #include "test.h"

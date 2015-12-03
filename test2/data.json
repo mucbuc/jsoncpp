@@ -1,0 +1,12 @@
+{
+    "wtf": { 
+        "right": true,
+        "zippo": null,
+        "strings": [ "hello", "arrays" ]
+    },
+    "wrong": true, 
+     "three": 3, 
+     "arr": [ 3, false, "something" ],
+     "single": "string",
+     "nothing": null
+}   
