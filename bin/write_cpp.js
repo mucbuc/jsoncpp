@@ -1,3 +1,17 @@
+/*	
+		, members, nestedClasses )
+		if (typeof members === 'undefined') {
+			members = '';
+		}
+		if (typeof nestedClasses === 'undefined') {
+			nestedClasses = '';
+		}
+
+		classes += nestedClasses;
+		classes += members;
+		classes += '};\n'; 
+	*/
+
 var util = require( 'util' );
 
 function Writer()
@@ -16,11 +30,14 @@ function Writer()
 		console.log( content );
 	};
 
-	this.defineClass = function( name, members, nestedClasses ) {
-
-		// template<class T> just like 
-		//classes += 'class ' + name + 
+	this.defineClassBegin = function( name ) {
+		classes += 'class ' + name + '\n';
+		classes += '{\n';
 	};
+
+	this.defineClassEnd = function( name ) {
+		classes += '};\n';
+	}
 
 	this.includeFile = function( filePath ) {
 		includes += '#include ' + filePath + '\n'; 
@@ -30,7 +47,6 @@ function Writer()
 		return '';
 	}
 
-
 	function includeGuardEnd() {
 		return '';
 	}
@@ -38,21 +54,11 @@ function Writer()
 
 
 function writeCPP( json ) {
-	
 	var writer = new Writer();
-
 	writer.includeFile( '<lib/jsoncpp/src/jsonbase.h>' );
-
+	writer.defineClassBegin( 'dummy' );
+	writer.defineClassEnd();
 	writer.writeFile( 'iyt' );
-// 	var code = '';
-// //	code += incluce guard
-// 	code += '#include <lib/jsoncpp/src/jsonbase.h>\n';
-// 	code += 'namespace cport\n'; 
-// 	code += '{\n';
-// 	code +=	'class Name : public';
-// 	code += '} // cport\n'
-// //	code += incluce guard close
-// 	console.log( code );
 }
 
 writeCPP( '' );
