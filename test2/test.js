@@ -7,13 +7,13 @@ var test = require( 'tape' )
   , processJSON = require( '../bin/process_json' );
 
 test( 'basic', function(t) {
-	fs.readFile( './data.json', function(err, data) {
-		if (err) throw err;
-		processJSON( JSON.parse( data.toString() ) )
-		.then( function(result) {
-			console.log( util.inspect(result) );
-			t.pass();
-        	t.end();
-		});
-	});
+  fs.readFile( './data.json', function(err, data) {
+    if (err) throw err;
+    processJSON( JSON.parse( data.toString() ) )
+    .then( function(result) {
+      console.log( util.inspect(result) );
+      t.pass();
+      t.end();
+    });
+  });
 });
