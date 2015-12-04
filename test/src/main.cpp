@@ -7,22 +7,16 @@
 
 #include "test.h"
 
-template<class T>
-class json : public json_base<T>
+class json : public json_base
 {
-    typedef json_base<T> base_type;
+    typedef json_base base_type;
     
-    using typename base_type::string_type;
-    using typename base_type::number_type;
-    using typename base_type::handler_type;
-    
-    struct nested_json : json_base<T>
+    struct nested_json : json_base
     {
-        typedef json_base<T> base_type;
+        typedef json_base base_type;
         nested_json()
         : base_type(
             { { "right", _right } },
-            {},
             {},
             {},
             { "zippo" }
@@ -31,7 +25,8 @@ class json : public json_base<T>
         , _strings( { "hello", "arrays" } )
         {}
         
-        virtual void traverse(handler_type & h) const override
+        template<class T> 
+        void traverse(T & h) const
         {
             h( "strings", _strings );
             base_type::traverse(h);
@@ -44,9 +39,8 @@ class json : public json_base<T>
 public:
     
     json()
-    : json_base<T>(
+    : json_base(
         { { "wrong", _wrong } },
-        { { "wtf", _wtf } },
         {},
         { { "three", _three } },
         {}
@@ -57,9 +51,11 @@ public:
     , _arr( 3, false, "something" )
     {}
     
-    virtual void traverse(handler_type & h) const override
+    template<class T>
+    void traverse(T & h) const
     {
         h( "arr", _arr );
+        h( "wtf", _wtf );
         base_type::traverse(h);
     }
     
@@ -73,12 +69,6 @@ struct handler_type
 {
     template<class T, class U>
     void operator()(T t, const U & u)
-    {
-        ASSERT( false );
-    }
-    
-    template<class T, class U, class V, class W>
-    void operator()(T t, const abstract_json<U, V, W> & u)
     {
         ++m_abstract_counter;
         u.traverse(* this);
@@ -132,7 +122,7 @@ struct handler_type
 
 int main(int argc, const char * argv[])
 {
-    json<handler_type> instance;
+    json instance;
     ASSERT( instance._wrong );
     ASSERT( instance._wtf._right );
     
