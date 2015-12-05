@@ -66,8 +66,10 @@ function writeCPP( json ) {
   var writer = new Writer();
   writer.includeFile( '<lib/jsoncpp/src/jsonbase.h>' );
   writer.defineClassBegin( 'dummy' );
-  writer.defineClassBegin( 'nested' );
-  writer.defineClassEnd();
+  //json[""]
+
+  //writer.defineClassBegin( 'nested' );
+  //writer.defineClassEnd();
   writer.defineClassEnd();
   writer.writeFile( 'iyt' );
 }
