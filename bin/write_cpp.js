@@ -33,19 +33,15 @@ function Writer()
 
   this.defineStructEnd = function( name ) {
     return tabs(--tabCount) + '};\n';
-  }
-
-  this.includeFile = function( filePath ) {
-    return '#include ' + filePath + '\n'; 
   };
 
   this.includeGuardBegin = function() {
     return '';
-  }
+  };
 
   this.includeGuardEnd = function() {
     return '';
-  }
+  };
 
   function tabs(count) {
     var result = '';
@@ -61,7 +57,6 @@ function writeCPP( json, name ) {
     , content = '';
 
   content += writer.includeGuardBegin();
-  content += writer.includeFile( '<lib/jsoncpp/src/jsonbase.h>' );
   content += writer.defineTemplateClassBegin( '<T = std::string, U = int>', name );
   
   //writer.write( '    typedef T string_type;' );
