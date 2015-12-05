@@ -19,7 +19,8 @@ function Writer()
   var classes = ''
     , includes = ''
     , guard = ''
-    , tabCount = 0;
+    , tabCount = 0
+    , instance = this;
 
   this.writeFile = function(filePath) {
     var content = '';
@@ -31,13 +32,18 @@ function Writer()
     console.log( content );
   };
 
-  this.defineClassBegin = function( name ) {
-    classes += tabs(tabCount) + 'class ' + name + '\n';
+  this.defineTemplateClassBegin = function( template, name ) {
+    classes += 'template ' + template + '\n';
+    instance.defineStructBegin( name );
+  };
+
+  this.defineStructBegin = function( name ) {
+    classes += tabs(tabCount) + 'struct ' + name + '\n';
     classes += tabs(tabCount) + '{\n';
     ++tabCount;
   };
 
-  this.defineClassEnd = function( name ) {
+  this.defineStructEnd = function( name ) {
     classes += tabs(--tabCount) + '};\n';
   }
 
@@ -65,12 +71,13 @@ function Writer()
 function writeCPP( json ) {
   var writer = new Writer();
   writer.includeFile( '<lib/jsoncpp/src/jsonbase.h>' );
-  writer.defineClassBegin( 'dummy' );
+  
+  writer.defineTemplateClassBegin( '<T = std::string, U = int>', 'dummy' );
   //json[""]
 
-  //writer.defineClassBegin( 'nested' );
-  //writer.defineClassEnd();
-  writer.defineClassEnd();
+  writer.defineStructBegin( 'nested' );
+  writer.defineStructEnd();
+  writer.defineStructEnd();
   writer.writeFile( 'iyt' );
 }
 

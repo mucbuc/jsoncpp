@@ -6,12 +6,6 @@
 
 #include "test.h"
 
-struct json_null
-{
-    json_null()
-    {}
-};
-
 template<class T = std::string, class U = int>
 struct json
 {
@@ -22,7 +16,7 @@ struct json
     {
         bool _right = true;
         std::tuple< string_type, string_type > _strings = { "hello", "arrays" };
-        json_null _zippo;
+        std::nullptr_t _zippo;
         
         template<class V>
         void traverse(V & h) const
@@ -88,7 +82,7 @@ struct handler_type
     }
     
     template<class T>
-    void operator()(const T & t, const json_null & u)
+    void operator()(const T & t, const std::nullptr_t & u)
     {
         m_nulls.insert( t );
     }
@@ -105,7 +99,7 @@ struct handler_type
 
 int main(int argc, const char * argv[])
 {
-    json<> instance;
+    json<std::string, unsigned> instance;
     ASSERT( instance._wrong );
     ASSERT( instance._wtf._right );
     
