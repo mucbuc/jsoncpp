@@ -1,7 +1,4 @@
 {
-	"import": [
-		"lib/jsoncpp/def.json"
-	],
 	"sources": [
 		"src/main.cpp"
 	]

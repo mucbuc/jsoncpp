@@ -1,68 +1,58 @@
 #include <iostream>
 #include <map>
+#include <set>
 #include <vector>
 #include <typeinfo>
 
-#include "json_base.h"
-
 #include "test.h"
 
-class json : public json_base
+struct json_null
 {
-    typedef json_base base_type;
+    json_null()
+    {}
+};
+
+class json 
+{
+    typedef std::string string_type;
+    typedef int number_type;
     
-    struct nested_json : json_base
+    struct nested_json 
     {
-        typedef json_base base_type;
         nested_json()
-        : base_type(
-            { { "right", _right } },
-            {},
-            {},
-            { "zippo" }
-          )
-        , _right( true )
-        , _strings( { "hello", "arrays" } )
         {}
         
         template<class T> 
         void traverse(T & h) const
         {
             h( "strings", _strings );
-            base_type::traverse(h);
+            h( "right", _right );
+            h( "zippo", _zippo );
         }
         
-        const bool _right;
-        const std::tuple< string_type, string_type > _strings;
+        const bool _right = true;
+        const std::tuple< string_type, string_type > _strings = { "hello", "arrays" };
+        const json_null _zippo;
     };
 
 public:
     
     json()
-    : json_base(
-        { { "wrong", _wrong } },
-        {},
-        { { "three", _three } },
-        {}
-      )
-    , _wrong( true )
-    , _wtf()
-    , _three( 3 )
-    , _arr( 3, false, "something" )
     {}
     
     template<class T>
     void traverse(T & h) const
     {
-        h( "arr", _arr );
+        h( "wrong", _wrong );
         h( "wtf", _wtf );
-        base_type::traverse(h);
+        h( "three", 3 );
+        h( "arr", _arr );
     }
     
-    const bool _wrong;
+    const bool _wrong = true;
     const nested_json _wtf;
-    const int _three;
-    const std::tuple< int, bool, string_type > _arr;
+    const int _three = 3;
+    const std::tuple< int, bool, string_type > _arr = { 3, false, "something" };
 };
 
 struct handler_type
