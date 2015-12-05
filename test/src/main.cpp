@@ -12,48 +12,40 @@ struct json_null
     {}
 };
 
-class json 
+struct json
 {
     typedef std::string string_type;
     typedef int number_type;
     
     struct nested_json 
     {
-        nested_json()
-        {}
-        
-        template<class T> 
-        void traverse(T & h) const
-        {
-            h( "strings", _strings );
-            h( "right", _right );
-            h( "zippo", _zippo );
-        }
-        
         const bool _right = true;
         const std::tuple< string_type, string_type > _strings = { "hello", "arrays" };
         const json_null _zippo;
     };
-
-public:
-    
-    json()
-    {}
-    
-    template<class T>
-    void traverse(T & h) const
-    {
-        h( "wrong", _wrong );
-        h( "wtf", _wtf );
-        h( "three", 3 );
-        h( "arr", _arr );
-    }
     
     const bool _wrong = true;
-    const nested_json _wtf;
+    const nested_json _wtf = {};
     const int _three = 3;
     const std::tuple< int, bool, string_type > _arr = { 3, false, "something" };
 };
+
+template<class T>
+void traverse(const json::nested_json & j, T & h)
+{
+    h( "strings", j._strings );
+    h( "right", j._right );
+    h( "zippo", j._zippo );
+}
+
+template<class T>
+void traverse(const json & j, T & h)
+{
+    h( "wrong", j._wrong );
+    h( "wtf", j._wtf );
+    h( "three", j._three );
+    h( "arr", j._arr );
+}
 
 struct handler_type
 {
@@ -61,7 +53,7 @@ struct handler_type
     void operator()(T t, const U & u)
     {
         ++m_abstract_counter;
-        u.traverse(* this);
+        traverse( u, * this);
     }
     
     template<class T>
@@ -117,7 +109,7 @@ int main(int argc, const char * argv[])
     ASSERT( instance._wtf._right );
     
     handler_type handler;
-    instance.traverse( handler );
+    traverse( instance, handler );
     
     ASSERT( handler.m_bools["right"] );
     ASSERT( handler.m_bools["wrong"] );
