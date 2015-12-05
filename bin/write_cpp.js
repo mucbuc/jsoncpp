@@ -19,6 +19,10 @@ function Writer()
   var tabCount = 0
     , instance = this;
 
+  this.write = function( text ) {
+    return tabs(tabCount) + text + '\n';
+  };
+
   this.defineTemplateClassBegin = function( template, name ) {
     var result = 'template ' + template + '\n';
     result += instance.defineStructBegin( name );
@@ -26,7 +30,7 @@ function Writer()
   };
 
   this.defineStructBegin = function( name ) {
-    var result = tabs(tabCount) + 'struct ' + name + '\n';
+    var result = instance.write( 'struct ' + name );
     result += tabs(tabCount++) + '{\n';
     return result;
   };
@@ -59,8 +63,8 @@ function writeCPP( json, name ) {
   content += writer.includeGuardBegin();
   content += writer.defineTemplateClassBegin( '<T = std::string, U = int>', name );
   
-  //writer.write( '    typedef T string_type;' );
-  //writer.write( '    typedef U number_type;' );
+  content += writer.write( 'typedef T string_type;' );
+  content += writer.write( 'typedef U number_type;' );
 
   content += writer.defineStructBegin( 'nested' );
   content += writer.defineStructEnd();
