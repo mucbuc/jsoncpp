@@ -16,46 +16,34 @@ var util = require( 'util' );
 
 function Writer()
 {
-  var classes = ''
-    , includes = ''
-    , guard = ''
-    , tabCount = 0
+  var tabCount = 0
     , instance = this;
 
-  this.writeFile = function(filePath) {
-    var content = '';
-    content += includeGuardBegin();
-    content += includes;
-    content += classes;
-    content += includeGuardEnd();
-  
-    console.log( content );
-  };
-
   this.defineTemplateClassBegin = function( template, name ) {
-    classes += 'template ' + template + '\n';
-    instance.defineStructBegin( name );
+    var result = 'template ' + template + '\n';
+    result += instance.defineStructBegin( name );
+    return result;
   };
 
   this.defineStructBegin = function( name ) {
-    classes += tabs(tabCount) + 'struct ' + name + '\n';
-    classes += tabs(tabCount) + '{\n';
-    ++tabCount;
+    var result = tabs(tabCount) + 'struct ' + name + '\n';
+    result += tabs(tabCount++) + '{\n';
+    return result;
   };
 
   this.defineStructEnd = function( name ) {
-    classes += tabs(--tabCount) + '};\n';
+    return tabs(--tabCount) + '};\n';
   }
 
   this.includeFile = function( filePath ) {
-    includes += '#include ' + filePath + '\n'; 
+    return '#include ' + filePath + '\n'; 
   };
 
-  function includeGuardBegin() {
+  this.includeGuardBegin = function() {
     return '';
   }
 
-  function includeGuardEnd() {
+  this.includeGuardEnd = function() {
     return '';
   }
 
@@ -68,19 +56,24 @@ function Writer()
   }
 }
 
-function writeCPP( json ) {
-  var writer = new Writer();
-  writer.includeFile( '<lib/jsoncpp/src/jsonbase.h>' );
-  
-  writer.defineTemplateClassBegin( '<T = std::string, U = int>', 'dummy' );
-  //json[""]
+function writeCPP( json, name ) {
+  var writer = new Writer()
+    , content = '';
 
-  writer.defineStructBegin( 'nested' );
-  writer.defineStructEnd();
-  writer.defineStructEnd();
-  writer.writeFile( 'iyt' );
+  content += writer.includeGuardBegin();
+  content += writer.includeFile( '<lib/jsoncpp/src/jsonbase.h>' );
+  content += writer.defineTemplateClassBegin( '<T = std::string, U = int>', name );
+  
+  //writer.write( '    typedef T string_type;' );
+  //writer.write( '    typedef U number_type;' );
+
+  content += writer.defineStructBegin( 'nested' );
+  content += writer.defineStructEnd();
+  content += writer.defineStructEnd();
+  content += writer.includeGuardEnd();
+  console.log( content );
 }
 
-writeCPP( '' );
+writeCPP( '', 'json' );
 
 module.exports = writeCPP;
