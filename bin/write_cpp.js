@@ -12,7 +12,7 @@ function Writer()
     , instance = this;
 
   this.write = function( text ) {
-    return tabs(tabCount) + text + '\n';
+    return tabs(tabCount) + text.replace( /\n/g, '\n' + tabs(tabCount) ) + '\n';
   };
 
   this.defineTemplateClassBegin = function( template, name ) {
