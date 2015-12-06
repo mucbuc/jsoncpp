@@ -77,30 +77,26 @@ function writeCPP( json, name ) {
   });
 
   json["array"].forEach( function(obj) {
+    var types = [];
     traverse( obj.value, function(type, next) {
-      //content += mapType(type); 
-      console.log( mapType(type) );
+      types.push( mapType(typeof type) );
       next();
     })
     .then( function() {
-      content += writer.write( 'std::tuple<' + arrayType(obj) + '> ' + writer.mangle( obj.name ) + ';' );
-      console.log( obj.value );
+      
+      content += writer.write( 'std::tuple<' + types.join(', ') + '> ' + writer.mangle( obj.name ) + ';' );
+        
+      [ "string", "number", "boolean" ].forEach( function(type) {
+        json[type].forEach( function(obj) {
+          content += writer.write( mapType(type) + ' ' + writer.mangle( obj.name ) + ';' );      
+        });
+      });
+
+      content += writer.defineStructEnd();
+      content += writer.includeGuardEnd();
+      console.log( content );
     });
-
-    function arrayType(obj) {
-      return 'int';
-    }
   });
-
-  [ "string", "number", "boolean" ].forEach( function(type) {
-    json[type].forEach( function(obj) {
-      content += writer.write( mapType(type) + ' ' + writer.mangle( obj.name ) + ';' );      
-    });
-  });
-
-  content += writer.defineStructEnd();
-  content += writer.includeGuardEnd();
-  console.log( content );
 
   function mapType(type) {
     switch (type) {
