@@ -80,6 +80,16 @@ function writeCPP( json, name ) {
       var value = type[key];
       switch (key) 
       {
+        case "object": 
+          content += writer.defineStructBegin( "obj.name" );
+      
+          // ///content += util.inspect(obj.value);
+
+          content += writer.defineStructEnd();  
+          
+          nextType(); 
+          break;
+
         case "array": 
           traverse( value, function( array, nextArray) {
 
