@@ -12,7 +12,8 @@
     classes += '};\n'; 
   */
 
-var util = require( 'util' );
+var util = require( 'util' )
+  , traverse = require( 'traverjs' );
 
 function Writer()
 {
@@ -47,10 +48,14 @@ function Writer()
     return '';
   };
 
+  this.mangle = function(source) {
+    return '_' + source;
+  };
+
   function tabs(count) {
     var result = '';
     while (count--) {
-      result += '\t';
+      result += '  ';
     }
     return result;
   }
@@ -66,13 +71,49 @@ function writeCPP( json, name ) {
   content += writer.write( 'typedef T string_type;' );
   content += writer.write( 'typedef U number_type;' );
 
-  content += writer.defineStructBegin( 'nested' );
-  content += writer.defineStructEnd();
+  json["object"].forEach( function(obj) {
+    content += writer.defineStructBegin( obj.name );
+    content += writer.defineStructEnd();   
+  });
+
+  json["array"].forEach( function(obj) {
+    traverse( obj.value, function(type, next) {
+      //content += mapType(type); 
+      next();
+    })
+    .then( function() {
+      content += writer.write( 'std::tuple<' + arrayType(obj) + '> ' + writer.mangle( obj.name ) + ';' );
+      console.log( obj.value );
+    });
+
+    function arrayType(obj) {
+      return 'int';
+    }
+  });
+
+  [ "string", "number", "boolean" ].forEach( function(type) {
+    json[type].forEach( function(obj) {
+      content += writer.write( mapType(type) + ' ' + writer.mangle( obj.name ) + ';' );      
+    });
+  });
+
   content += writer.defineStructEnd();
   content += writer.includeGuardEnd();
   console.log( content );
-}
 
-writeCPP( '', 'json' );
+  function mapType(type) {
+    switch (type) {
+      case 'object':
+      case 'array': 
+        break;
+      case 'boolean':
+        return 'bool';
+      case 'null':
+        return 'std::nullptr_t';
+    }
+    return type + '_type';
+  }
+
+}
 
 module.exports = writeCPP;
