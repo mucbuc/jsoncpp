@@ -9,27 +9,37 @@ assert( typeof processJSON );
 function Writer(tabInit)
 {
   var tabCount = 0
-    , instance = this;
+    , instance = this
+    , init = '';
+
+  this.open = function() {
+    ++tabCount;
+  };
+
+  this.close = function() {
+    --tabCount;
+  };
 
   this.write = function( text ) {
-    return tabs(tabCount) + text.replace( /\n/g, '\n' + tabs(tabCount) ) + '\n';
+    return instance.tabs(tabCount) + text.replace( /\n/g,  instance.tabs(tabCount) );
   };
 
   this.defineTemplateClassBegin = function( template, name ) {
-    var result = 'template ' + template + '\n';
+    var result = init + 'template ' + template;
+    init = '\n';
     result += instance.defineStructBegin( name );
     return result;
   };
 
   this.defineStructBegin = function( name ) {
     var result = instance.write( 'struct ' + name );
-    result += tabs(tabCount++) + '{\n';
+    result += instance.tabs(tabCount++) + '{';
     return result;
   };
 
   this.defineStructEnd = function( name ) {
     assert( tabCount );
-    return tabs(--tabCount) + '};\n';
+    return instance.tabs(--tabCount) + '};';
   };
 
   this.includeGuardBegin = function() {
@@ -44,13 +54,14 @@ function Writer(tabInit)
     return '_' + source;
   };
 
-  function tabs(count) {
-    var result = '';
+  this.tabs = function(count) {
+    var result = init;
+    init = '\n';
     while (count--) {
       result += '  ';
     }
     return result;
-  }
+  };
 }
 
 function writeCPP( json, name ) {
@@ -78,7 +89,8 @@ function writeCPPInternal( json, name ) {
   return new Promise( function(resolve, reject) {
 
     var writer = new Writer()
-      , content = '';
+      , content = ''
+      , members = [];
 
     //content += writer.includeGuardBegin();
     //content += writer.defineTemplateClassBegin( '<T = std::string, U = int>', name );
@@ -92,7 +104,6 @@ function writeCPPInternal( json, name ) {
 
       var key = Object.keys( type )[0];
       var value = type[key];
-      
       
       switch (key) 
       {
@@ -108,6 +119,7 @@ function writeCPPInternal( json, name ) {
                 content += writer.write(nested);
                 content += writer.defineStructEnd();
                 content += writer.write(typeName + ' ' + writer.mangle( object.name ) + ' = {};' );
+                members.push( object.name ); 
                 nextObject(); 
               } );
             });
@@ -128,6 +140,7 @@ function writeCPPInternal( json, name ) {
               content += writer.write( 'std::tuple<' + types.join(', ') 
                  + '> ' + writer.mangle( array.name ) 
                  + ' = {' + util.inspect( array.value).slice(1,-1) + '};' );
+              members.push( array.name ); 
               nextArray();
             });
           })
@@ -141,7 +154,8 @@ function writeCPPInternal( json, name ) {
           content += writer.write( mapped 
             + ' ' + writer.mangle( obj.name )
             + ' = ' + obj.value + ';' );
-            next();  
+          members.push( obj.name );
+          next();  
         })
         .then( nextType )
         .catch( nextType );
@@ -151,7 +165,8 @@ function writeCPPInternal( json, name ) {
         traverse(value, function(obj, next) { 
           content += writer.write( mapped 
             + ' ' + writer.mangle( obj.name ) + ';' );
-            next();  
+          members.push( obj.name );
+          next();  
         })
         .then( nextType )
         .catch( nextType );
@@ -161,10 +176,15 @@ function writeCPPInternal( json, name ) {
       }; 
     })
     .then(function() {
-      
-      //content += writer.defineStructEnd();
-      //content += writer.includeGuardEnd();
-      
+      content += writer.write( 'template<class V>' );
+      content += writer.write( 'void traverse(V & h)' );
+      content += writer.write( '{' );
+      writer.open();
+      members.forEach( function(member) {
+        content += writer.write( 'h( "' + member + '", ' + writer.mangle(member) + ');' );
+      } );
+      writer.close();
+      content += writer.write( '}' );
       resolve(content);
     });
 
