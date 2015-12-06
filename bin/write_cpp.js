@@ -52,23 +52,21 @@ function Writer()
     return result;
   }
 }
+    //content += writer.includeGuardBegin();
+    //content += writer.defineTemplateClassBegin( '<T = std::string, U = int>', name );
+    
+    // content += writer.write( 'typedef T string_type;' );
+    // content += writer.write( 'typedef U number_type;' );
 
-function writeCPP( json, name ) {
+function writeNestedCPP( json, name ) {
   
   return new Promise( function(resolve, reject) {
 
     var writer = new Writer()
       , content = '';
 
-    //content += writer.includeGuardBegin();
-    content += writer.defineTemplateClassBegin( '<T = std::string, U = int>', name );
-    
-    // content += writer.write( 'typedef T string_type;' );
-    // content += writer.write( 'typedef U number_type;' );
-
     traverse( json, function(type, nextType) { 
       
-
 
       var key = Object.keys( type )[0];
       var value = type[key];
@@ -160,4 +158,4 @@ function writeCPP( json, name ) {
   }
 }
 
-module.exports = writeCPP;
+module.exports = writeNestedCPP;
