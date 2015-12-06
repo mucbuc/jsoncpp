@@ -13,7 +13,10 @@ function translate(pathJSON) {
     if (err) throw err;
     processJSON(JSON.parse(data.toString()))
     .then( function(result) {
-      writeCPP(result, 'json' );
+      writeCPP(result, 'json' )
+      .then( function(source) { 
+        console.log( source ); 
+      });
     });
   });
 }

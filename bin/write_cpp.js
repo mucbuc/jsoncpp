@@ -1,20 +1,10 @@
-/*  
-    , members, nestedClasses )
-    if (typeof members === 'undefined') {
-      members = '';
-    }
-    if (typeof nestedClasses === 'undefined') {
-      nestedClasses = '';
-    }
-
-    classes += nestedClasses;
-    classes += members;
-    classes += '};\n'; 
-  */
-
-var util = require( 'util' )
+var assert = require( 'assert' )
+  , util = require( 'util' )
   , traverse = require( 'traverjs' )
-  , Promise = require( 'promise' );
+  , Promise = require( 'promise' )
+  , processJSON = require( './process_json' );
+
+assert( typeof processJSON ); 
 
 function Writer()
 {
@@ -38,6 +28,7 @@ function Writer()
   };
 
   this.defineStructEnd = function( name ) {
+    assert( tabCount );
     return tabs(--tabCount) + '};\n';
   };
 
@@ -69,28 +60,36 @@ function writeCPP( json, name ) {
     var writer = new Writer()
       , content = '';
 
-    content += writer.includeGuardBegin();
+    //content += writer.includeGuardBegin();
     content += writer.defineTemplateClassBegin( '<T = std::string, U = int>', name );
     
-    content += writer.write( 'typedef T string_type;' );
-    content += writer.write( 'typedef U number_type;' );
+    // content += writer.write( 'typedef T string_type;' );
+    // content += writer.write( 'typedef U number_type;' );
 
     traverse( json, function(type, nextType) { 
+      
+
+
       var key = Object.keys( type )[0];
       var value = type[key];
+      
+      
       switch (key) 
       {
         case "object": 
           traverse( value, function( object, nextObject ) {
-
-            content += writer.defineStructBegin( object.name );
-      
-            content += util.inspect(object.value);
-
-            content += writer.defineStructEnd();  
-          
+            
+            processJSON(object.value)
+            .then( function(result) {
+              writeCPP( result, object.name )
+              .then( function(nested) {
+                content += writer.write(nested);
+                nextObject(); 
+              } );
+            });
           })
-          .then( nextType );
+          .then( nextType )
+          .catch( nextType );
           break;
 
         case "array": 
@@ -120,7 +119,18 @@ function writeCPP( json, name ) {
             + ' = ' + obj.value + ';' );
             next();  
         })
-        .then( nextType );
+        .then( nextType )
+        .catch( nextType );
+        break;
+      case "null": 
+        var mapped = mapType(key);
+        traverse(value, function(obj, next) { 
+          content += writer.write( mapped 
+            + ' ' + writer.mangle( obj.name ) );
+            next();  
+        })
+        .then( nextType )
+        .catch( nextType );
         break;
       default:
         nextType();
@@ -129,7 +139,6 @@ function writeCPP( json, name ) {
     .then(function() {
       content += writer.defineStructEnd();
       content += writer.includeGuardEnd();
-      console.log( content );
       resolve(content);
     });
 
