@@ -77,6 +77,9 @@ function writeCPP( json, name ) {
 
     json["object"].forEach( function(obj) {
       content += writer.defineStructBegin( obj.name );
+      
+      ///content += util.inspect(obj.value);
+
       content += writer.defineStructEnd();   
     });
 
@@ -88,12 +91,10 @@ function writeCPP( json, name ) {
         next();
       })
       .then( function() {
-
-        console.log( obj.value, obj.value.join( ', ' ) );
         content += writer.write( 'std::tuple<' + types.join(', ') 
           + '> ' + writer.mangle( obj.name ) 
           + ' = {' + util.inspect(obj.value).slice(1,-1) + '};' );
-          
+        
         [ "string", "number", "boolean" ].forEach( function(type) {
           json[type].forEach( function(obj) {
             content += writer.write( mapType(type) 
