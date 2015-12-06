@@ -81,13 +81,17 @@ function writeCPP( json, name ) {
       switch (key) 
       {
         case "object": 
-          content += writer.defineStructBegin( "obj.name" );
-      
-          // ///content += util.inspect(obj.value);
+          // traverse( value, function( object, nextObject ) {
 
-          content += writer.defineStructEnd();  
+          //   content += writer.defineStructBegin( object.name );
+      
+          //   content += util.inspect(object.value);
+
+          //   content += writer.defineStructEnd();  
           
-          nextType(); 
+          // })
+          // .then( nextType );
+          nextType();
           break;
 
         case "array": 
@@ -105,9 +109,7 @@ function writeCPP( json, name ) {
               nextArray();
             });
           })
-          .then( function() {
-            nextType();
-          });
+          .then( nextType );
           break;
       case "string":
       case "number":
@@ -116,9 +118,11 @@ function writeCPP( json, name ) {
         traverse(value, function(obj, next) { 
           content += writer.write( mapped 
             + ' ' + writer.mangle( obj.name )
-            + ' = ' + obj.value + ';' );   
-        });
-        // fall thru
+            + ' = ' + obj.value + ';' );
+            next();  
+        })
+        .then( nextType );
+        break;
       default:
         nextType();
       }; 
@@ -130,45 +134,6 @@ function writeCPP( json, name ) {
       resolve(content);
     });
 
-
-
-
-/*
-    json["object"].forEach( function(obj) {
-      content += writer.defineStructBegin( obj.name );
-      
-      ///content += util.inspect(obj.value);
-
-      content += writer.defineStructEnd();   
-    });
-
-    json["array"].forEach( function(obj) {
-      
-      var types = [];
-      traverse( obj.value, function(type, next) {
-        types.push( mapType(typeof type) );
-        next();
-      })
-      .then( function() {
-        content += writer.write( 'std::tuple<' + types.join(', ') 
-          + '> ' + writer.mangle( obj.name ) 
-          + ' = {' + util.inspect(obj.value).slice(1,-1) + '};' );
-        
-        [ "string", "number", "boolean" ].forEach( function(type) {
-          json[type].forEach( function(obj) {
-            content += writer.write( mapType(type) 
-              + ' ' + writer.mangle( obj.name )
-              + ' = ' + obj.value + ';' );      
-          });
-        });
-
-        content += writer.defineStructEnd();
-        content += writer.includeGuardEnd();
-        console.log( content );
-        resolve();
-      });
-    });
-*/
   });
 
   function mapType(type) {
