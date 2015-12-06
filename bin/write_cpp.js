@@ -81,17 +81,16 @@ function writeCPP( json, name ) {
       switch (key) 
       {
         case "object": 
-          // traverse( value, function( object, nextObject ) {
+          traverse( value, function( object, nextObject ) {
 
-          //   content += writer.defineStructBegin( object.name );
+            content += writer.defineStructBegin( object.name );
       
-          //   content += util.inspect(object.value);
+            content += util.inspect(object.value);
 
-          //   content += writer.defineStructEnd();  
+            content += writer.defineStructEnd();  
           
-          // })
-          // .then( nextType );
-          nextType();
+          })
+          .then( nextType );
           break;
 
         case "array": 
