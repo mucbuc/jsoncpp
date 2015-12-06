@@ -6,7 +6,7 @@ var assert = require( 'assert' )
 
 assert( typeof processJSON ); 
 
-function Writer()
+function Writer(tabInit)
 {
   var tabCount = 0
     , instance = this;
@@ -54,6 +54,26 @@ function Writer()
 }
 
 function writeCPP( json, name ) {
+  return new Promise( function(resolve, reject) { 
+
+    writeCPPInternal( json, name )
+    .then( function(content) {
+      var result = ''
+        , writer = new Writer();
+      result += writer.includeGuardBegin();
+      result += writer.defineTemplateClassBegin( '<T = std::string, U = int>', name );
+      result += writer.write( 'typedef T string_type;' );
+      result += writer.write( 'typedef U number_type;' );
+      result += writer.write( content );
+      result += writer.defineStructEnd();
+      result += writer.includeGuardEnd();
+      resolve( result );
+    })
+    .catch( reject );
+  });
+}
+
+function writeCPPInternal( json, name ) {
   
   return new Promise( function(resolve, reject) {
 
@@ -61,7 +81,7 @@ function writeCPP( json, name ) {
       , content = '';
 
     //content += writer.includeGuardBegin();
-    content += writer.defineTemplateClassBegin( '<T = std::string, U = int>', name );
+    //content += writer.defineTemplateClassBegin( '<T = std::string, U = int>', name );
     
     // content += writer.write( 'typedef T string_type;' );
     // content += writer.write( 'typedef U number_type;' );
@@ -82,9 +102,11 @@ function writeCPP( json, name ) {
             processJSON(object.value)
             .then( function(result) {
               var typeName = mapType( object.name );
-              writeCPP( result, typeName )
+              writeCPPInternal( result, typeName )
               .then( function(nested) {
+                content += writer.defineStructBegin( typeName ); 
                 content += writer.write(nested);
+                content += writer.defineStructEnd();
                 content += writer.write(typeName + ' ' + writer.mangle( object.name ) + ' = {};' );
                 nextObject(); 
               } );
@@ -128,7 +150,7 @@ function writeCPP( json, name ) {
         var mapped = mapType(key);
         traverse(value, function(obj, next) { 
           content += writer.write( mapped 
-            + ' ' + writer.mangle( obj.name ) );
+            + ' ' + writer.mangle( obj.name ) + ';' );
             next();  
         })
         .then( nextType )
@@ -139,8 +161,10 @@ function writeCPP( json, name ) {
       }; 
     })
     .then(function() {
-      content += writer.defineStructEnd();
-      content += writer.includeGuardEnd();
+      
+      //content += writer.defineStructEnd();
+      //content += writer.includeGuardEnd();
+      
       resolve(content);
     });
 
