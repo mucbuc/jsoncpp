@@ -13,7 +13,8 @@
   */
 
 var util = require( 'util' )
-  , traverse = require( 'traverjs' );
+  , traverse = require( 'traverjs' )
+  , Promise = require( 'promise' );
 
 function Writer()
 {
@@ -62,39 +63,44 @@ function Writer()
 }
 
 function writeCPP( json, name ) {
-  var writer = new Writer()
-    , content = '';
-
-  content += writer.includeGuardBegin();
-  content += writer.defineTemplateClassBegin( '<T = std::string, U = int>', name );
   
-  content += writer.write( 'typedef T string_type;' );
-  content += writer.write( 'typedef U number_type;' );
+  return new Promise( function(resolve, reject) {
 
-  json["object"].forEach( function(obj) {
-    content += writer.defineStructBegin( obj.name );
-    content += writer.defineStructEnd();   
-  });
+    var writer = new Writer()
+      , content = '';
 
-  json["array"].forEach( function(obj) {
-    var types = [];
-    traverse( obj.value, function(type, next) {
-      types.push( mapType(typeof type) );
-      next();
-    })
-    .then( function() {
-      
-      content += writer.write( 'std::tuple<' + types.join(', ') + '> ' + writer.mangle( obj.name ) + ';' );
+    content += writer.includeGuardBegin();
+    content += writer.defineTemplateClassBegin( '<T = std::string, U = int>', name );
+    
+    content += writer.write( 'typedef T string_type;' );
+    content += writer.write( 'typedef U number_type;' );
+
+    json["object"].forEach( function(obj) {
+      content += writer.defineStructBegin( obj.name );
+      content += writer.defineStructEnd();   
+    });
+
+    json["array"].forEach( function(obj) {
+      var types = [];
+      traverse( obj.value, function(type, next) {
+        types.push( mapType(typeof type) );
+        next();
+      })
+      .then( function() {
         
-      [ "string", "number", "boolean" ].forEach( function(type) {
-        json[type].forEach( function(obj) {
-          content += writer.write( mapType(type) + ' ' + writer.mangle( obj.name ) + ';' );      
+        content += writer.write( 'std::tuple<' + types.join(', ') + '> ' + writer.mangle( obj.name ) + ';' );
+          
+        [ "string", "number", "boolean" ].forEach( function(type) {
+          json[type].forEach( function(obj) {
+            content += writer.write( mapType(type) + ' ' + writer.mangle( obj.name ) + ';' );      
+          });
         });
-      });
 
-      content += writer.defineStructEnd();
-      content += writer.includeGuardEnd();
-      console.log( content );
+        content += writer.defineStructEnd();
+        content += writer.includeGuardEnd();
+        console.log( content );
+        resolve();
+      });
     });
   });
 
