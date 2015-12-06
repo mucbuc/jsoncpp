@@ -75,6 +75,55 @@ function writeCPP( json, name ) {
     content += writer.write( 'typedef T string_type;' );
     content += writer.write( 'typedef U number_type;' );
 
+    traverse( json, function(type, nextType) { 
+      var key = Object.keys( type )[0];
+      var value = type[key];
+      switch (key) 
+      {
+        case "array": 
+          traverse( value, function( array, nextArray) {
+
+            var types = [];
+            traverse( array, function(type, nextType) {
+              types.push( mapType(typeof key) );
+              nextType();
+            })
+            .then( function() {
+              content += writer.write( 'std::tuple<' + types.join(', ') 
+                 + '> ' + writer.mangle( array.name ) 
+                 + ' = {' + util.inspect( array.value).slice(1,-1) + '};' );
+              nextArray();
+            });
+          })
+          .then( function() {
+            nextType();
+          });
+          break;
+      case "string":
+      case "number":
+      case "boolean":
+        var mapped = mapType(key);
+        traverse(value, function(obj, next) { 
+          content += writer.write( mapped 
+            + ' ' + writer.mangle( obj.name )
+            + ' = ' + obj.value + ';' );   
+        });
+        // fall thru
+      default:
+        nextType();
+      }; 
+    })
+    .then(function() {
+      content += writer.defineStructEnd();
+      content += writer.includeGuardEnd();
+      console.log( content );
+      resolve(content);
+    });
+
+
+
+
+/*
     json["object"].forEach( function(obj) {
       content += writer.defineStructBegin( obj.name );
       
@@ -109,6 +158,7 @@ function writeCPP( json, name ) {
         resolve();
       });
     });
+*/
   });
 
   function mapType(type) {
