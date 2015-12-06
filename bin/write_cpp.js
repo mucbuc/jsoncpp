@@ -79,6 +79,7 @@ function writeCPP( json, name ) {
   json["array"].forEach( function(obj) {
     traverse( obj.value, function(type, next) {
       //content += mapType(type); 
+      console.log( mapType(type) );
       next();
     })
     .then( function() {
@@ -113,7 +114,6 @@ function writeCPP( json, name ) {
     }
     return type + '_type';
   }
-
 }
 
 module.exports = writeCPP;
