@@ -81,18 +81,24 @@ function writeCPP( json, name ) {
     });
 
     json["array"].forEach( function(obj) {
+      
       var types = [];
       traverse( obj.value, function(type, next) {
         types.push( mapType(typeof type) );
         next();
       })
       .then( function() {
-        
-        content += writer.write( 'std::tuple<' + types.join(', ') + '> ' + writer.mangle( obj.name ) + ';' );
+
+        console.log( obj.value, obj.value.join( ', ' ) );
+        content += writer.write( 'std::tuple<' + types.join(', ') 
+          + '> ' + writer.mangle( obj.name ) 
+          + ' = {' + util.inspect(obj.value).slice(1,-1) + '};' );
           
         [ "string", "number", "boolean" ].forEach( function(type) {
           json[type].forEach( function(obj) {
-            content += writer.write( mapType(type) + ' ' + writer.mangle( obj.name ) + ';' );      
+            content += writer.write( mapType(type) 
+              + ' ' + writer.mangle( obj.name )
+              + ' = ' + obj.value + ';' );      
           });
         });
 
