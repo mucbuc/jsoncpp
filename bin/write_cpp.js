@@ -81,9 +81,11 @@ function writeCPP( json, name ) {
             
             processJSON(object.value)
             .then( function(result) {
-              writeCPP( result, object.name )
+              var typeName = mapType( object.name );
+              writeCPP( result, typeName )
               .then( function(nested) {
                 content += writer.write(nested);
+                content += writer.write(typeName + ' ' + writer.mangle( object.name ) + ' = {};' );
                 nextObject(); 
               } );
             });
