@@ -82,35 +82,21 @@ function writeCPPInternal( json, name ) {
         .then( nextType );
         break;
       case "string":
-        var mapped = mapType(key);
-        traverse(value, function(obj, next) { 
-          content += writer.write( mapped 
-            + ' ' + writer.mangle( obj.name )
-            + ' = "' + obj.value + '";' );
-          members.push( obj.name );
-          next();  
-        })
-        .then( nextType )
-        .catch( nextType );
-        break;
       case "number":
       case "boolean":
-        var mapped = mapType(key);
-        traverse(value, function(obj, next) { 
-          content += writer.write( mapped 
-            + ' ' + writer.mangle( obj.name )
-            + ' = ' + obj.value + ';' );
-          members.push( obj.name );
-          next();  
-        })
-        .then( nextType )
-        .catch( nextType );
-        break;
       case "null": 
         var mapped = mapType(key);
         traverse(value, function(obj, next) { 
-          content += writer.write( mapped 
-            + ' ' + writer.mangle( obj.name ) + ';' );
+          content += writer.write( mapped + ' ' + writer.mangle( obj.name ) );
+          if (key === "null") {
+            content += ';'
+          }
+          else if (key === "string") {
+            content += ' = "' + obj.value + '";';
+          }
+          else {
+            content += ' = ' + obj.value + ';';
+          }
           members.push( obj.name );
           next();  
         })
