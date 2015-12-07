@@ -3,7 +3,8 @@ var assert = require( 'assert' )
   , traverse = require( 'traverjs' )
   , Promise = require( 'promise' )
   , processJSON = require( './process_json' )
-  , Writer = require( './writer' );
+  , Writer = require( './writer' )
+  , makeModel = require( './model' );
 
 assert( typeof processJSON !== 'undefined' ); 
 assert( typeof Writer !== 'undefined' );
@@ -45,11 +46,15 @@ function writeCPPInternal( json, name ) {
       {
       case "object": 
         traverse( value, function( object, nextObject ) {
-          
-          processJSON(object.value)
-          .then( function(result) {
+          var model = makeModel();
+          processJSON(
+            object.value,
+            function(type, name, value) {
+              model[type].push( { name: name, value: value} );
+            })
+          .then( function() {
             var typeName = mapType( object.name );
-            writeCPPInternal( result, typeName )
+            writeCPPInternal( model, typeName )
             .then( function(nested) {
               content += writer.defineStructBegin( typeName ); 
               content += writer.write(nested);
