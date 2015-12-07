@@ -11,6 +11,7 @@ function Writer(tabInit)
   };
 
   this.close = function() {
+    assert( tabCount );
     return instance.tabs(--tabCount) + '}' ;
   };
 
@@ -26,14 +27,11 @@ function Writer(tabInit)
   };
 
   this.defineStructBegin = function( name ) {
-    var result = instance.write( 'struct ' + name );
-    result += instance.tabs(tabCount++) + '{';
-    return result;
+    return instance.write( 'struct ' + name ) + instance.open();
   };
 
   this.defineStructEnd = function( name ) {
-    assert( tabCount );
-    return instance.tabs(--tabCount) + '};';
+    return instance.close() + ';';
   };
 
   this.includeGuardBegin = function() {
