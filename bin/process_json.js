@@ -1,5 +1,4 @@
 var assert = require( 'assert' )
-  , util = require( 'util' )
   , traverse = require( 'traverjs' )
   , Promise = require( 'promise' );
 
