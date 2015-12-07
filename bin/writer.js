@@ -7,11 +7,11 @@ function Writer(tabInit)
     , init = '';
 
   this.open = function() {
-    ++tabCount;
+    return instance.tabs(tabCount++) + '{' ;
   };
 
   this.close = function() {
-    --tabCount;
+    return instance.tabs(--tabCount) + '}' ;
   };
 
   this.write = function( text ) {

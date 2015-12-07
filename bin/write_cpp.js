@@ -113,13 +113,11 @@ function writeCPPInternal( json, name ) {
     .then(function() {
       content += writer.write( 'template<class V>' );
       content += writer.write( 'void traverse(V & h)' );
-      content += writer.write( '{' );
-      writer.open();
+      content += writer.open();
       members.forEach( function(member) {
         content += writer.write( 'h( "' + member + '", ' + writer.mangle(member) + ');' );
       } );
-      writer.close();
-      content += writer.write( '}' );
+      content += writer.close();
       resolve(content);
     });
 
