@@ -1,19 +1,15 @@
-var traverse = require( 'traverjs' )
-  , Promise = require( 'promise' );
+var assert = require( 'assert' )
+  , util = require( 'util' )
+  , traverse = require( 'traverjs' )
+  , Promise = require( 'promise' )
+  , makeModel = require( './model' );
+
+assert( typeof makeModel !== 'undefined' );
 
 function processJSON(json, name) {
 
 	return new Promise( function(resolve, reject) {
-
-
-		var result = {
-				"null": [],
-				"boolean": [],
-				number: [],
-				string: [],
-				object: [],
-				array: []
-			  };
+		var model = makeModel();
 
 		traverse( json, function(o, next) {
 			var name = Object.keys(o)[0]
@@ -28,11 +24,11 @@ function processJSON(json, name) {
 					type = 'null';
 				}
 			}
-			result[type].push({name: name, value: value});
+			model[type].push({name: name, value: value});
 			next();
 		} )
 		.then( function() {
-			resolve(result);
+			resolve(model);
 		})
 		.catch( reject );
 	});
