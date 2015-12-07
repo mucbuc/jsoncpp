@@ -9,12 +9,12 @@ assert( typeof processJSON !== 'undefined' );
 assert( typeof Writer !== 'undefined' );
 
 function writeCPP( json, name ) {
-  return new Promise( function(resolve, reject) { 
-
+  return new Promise( function(resolve, reject) {
     writeCPPInternal( json, name )
     .then( function(content) {
       var result = ''
         , writer = new Writer();
+
       result += writer.includeGuardBegin();
       result += writer.defineTemplateClassBegin( '<T = std::string, U = int>', name );
       result += writer.write( 'typedef T string_type;' );
@@ -82,6 +82,17 @@ function writeCPPInternal( json, name ) {
         .then( nextType );
         break;
       case "string":
+        var mapped = mapType(key);
+        traverse(value, function(obj, next) { 
+          content += writer.write( mapped 
+            + ' ' + writer.mangle( obj.name )
+            + ' = "' + obj.value + '";' );
+          members.push( obj.name );
+          next();  
+        })
+        .then( nextType )
+        .catch( nextType );
+        break;
       case "number":
       case "boolean":
         var mapped = mapType(key);
