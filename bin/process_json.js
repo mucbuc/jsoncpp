@@ -21,8 +21,7 @@ function processJSON(json, cb) {
           type = 'null';
         }
       }
-      cb( type, name, value );
-      next();
+      cb( { type: type, name: name, value: value }, next );
     } )
     .then( function() {
       resolve();

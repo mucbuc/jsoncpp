@@ -16,8 +16,9 @@ function translate(pathJSON) {
     if (err) throw err;
     processJSON(
       JSON.parse(data.toString()),
-      function(type, name, value) {
-        model[type].push( { name: name, value: value} );
+      function(info, next) {
+        model[info.type].push( { name: info.name, value: info.value} );
+        next();
       }
     )
     .then( function() {
