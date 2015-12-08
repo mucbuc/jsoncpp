@@ -49,8 +49,9 @@ function writeCPPInternal( json, name ) {
           var model = makeModel();
           processJSON(
             object.value,
-            function(type, name, value) {
-              model[type].push( { name: name, value: value} );
+            function(info, next) {
+              model[info.type].push( { name: info.name, value: info.value} );
+              next();
             })
           .then( function() {
             var typeName = mapType( object.name );

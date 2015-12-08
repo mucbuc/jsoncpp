@@ -9,8 +9,9 @@ test( 'basic', function(t) {
 
 	expector.expect( 'number' );
 
-	processJSON( { data: 0 }, function(type, name, value) {
-		expector.emit( type );
+	processJSON( { data: 0 }, function(info, next) {
+		expector.emit( info.type );
+		next();
 		expector.check();
 	});
 });
