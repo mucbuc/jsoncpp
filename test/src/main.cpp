@@ -1,121 +1,88 @@
 #include <iostream>
 #include <map>
+#include <set>
 #include <vector>
 #include <typeinfo>
 
-#include "json_base.h"
-
 #include "test.h"
 
-template<class T>
-class json : public json_base<T>
+template<class T = std::string, class U = int>
+struct json
 {
-    typedef json_base<T> base_type;
+    typedef T string_type;
+    typedef U number_type;
     
-    using typename base_type::string_type;
-    using typename base_type::number_type;
-    using typename base_type::handler_type;
-    
-    struct nested_json : json_base<T>
+    struct nested_json 
     {
-        typedef json_base<T> base_type;
-        nested_json()
-        : base_type(
-            { { "right", _right } },
-            {},
-            {},
-            {},
-            { "zippo" }
-          )
-        , _right( true )
-        , _strings( { "hello", "arrays" } )
-        {}
+        bool _right = true;
+        std::tuple< string_type, string_type > _strings = { "hello", "arrays" };
+        std::nullptr_t _zippo;
         
-        virtual void traverse(handler_type & h) const override
+        template<class V>
+        void traverse(V & h) const
         {
             h( "strings", _strings );
-            base_type::traverse(h);
+            h( "right", _right );
+            h( "zippo", _zippo );
         }
-        
-        const bool _right;
-        const std::tuple< string_type, string_type > _strings;
     };
+    
+    bool _wrong = true;
+    nested_json _wtf = {};
+    int _three = 3;
+    std::tuple< int, bool, string_type > _arr = { 3, false, "something" };
 
-public:
-    
-    json()
-    : json_base<T>(
-        { { "wrong", _wrong } },
-        { { "wtf", _wtf } },
-        {},
-        { { "three", _three } },
-        {}
-      )
-    , _wrong( true )
-    , _wtf()
-    , _three( 3 )
-    , _arr( 3, false, "something" )
-    {}
-    
-    virtual void traverse(handler_type & h) const override
+    template<class V>
+    void traverse(V & h) const
     {
+        h( "wrong", _wrong );
+        h( "wtf", _wtf );
+        h( "three", _three );
         h( "arr", _arr );
-        base_type::traverse(h);
     }
-    
-    const bool _wrong;
-    const nested_json _wtf;
-    const int _three;
-    const std::tuple< int, bool, string_type > _arr;
 };
 
 struct handler_type
 {
     template<class T, class U>
-    void operator()(T t, const U & u)
-    {
-        ASSERT( false );
-    }
-    
-    template<class T, class U, class V, class W>
-    void operator()(T t, const abstract_json<U, V, W> & u)
+    void operator()(const T & t, const U & u)
     {
         ++m_abstract_counter;
-        u.traverse(* this);
+        u.traverse( * this);
     }
     
     template<class T>
-    void operator()(T t, const std::tuple< int, bool, std::string > & u)
+    void operator()(const T & t, const std::tuple< int, bool, std::string > & u)
     {
         ++m_tuple_int_bool_string_counter;
     }
     
     template<class T>
-    void operator()(T t, const std::tuple< std::string, std::string > & u)
+    void operator()(const T & t, const std::tuple< std::string, std::string > & u)
     {
         ++m_tuple_string_string_counter;
     }
     
     template<class T>
-    void operator()(T t, const std::string & u)
+    void operator()(const T & t, const std::string & u)
     {
         m_strings[t] = u;
     }
     
     template<class T>
-    void operator()(T t, const int & u)
+    void operator()(const T & t, const int & u)
     {
         m_ints[t] = u;
     }
     
     template<class T>
-    void operator()(T t, const bool & u)
+    void operator()(const T & t, const bool & u)
     {
         m_bools[t] = u;
     }
     
     template<class T>
-    void operator()(T t, const json_null & u)
+    void operator()(const T & t, const std::nullptr_t & u)
     {
         m_nulls.insert( t );
     }
@@ -132,7 +99,7 @@ struct handler_type
 
 int main(int argc, const char * argv[])
 {
-    json<handler_type> instance;
+    json<std::string, unsigned> instance;
     ASSERT( instance._wrong );
     ASSERT( instance._wtf._right );
     

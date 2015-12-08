@@ -22,6 +22,7 @@
   "dependencies": {
     "tape": "*",
     "traverjs": "*",
-    "expector": "*"
+    "expector": "*",
+    "promise": "*"
   }
 }

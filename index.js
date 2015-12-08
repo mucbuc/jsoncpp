@@ -1,37 +1,32 @@
-var traverse = require( 'traverjs' )
-  , util = require( 'util' );
+#!/usr/bin/env node
 
-function processJSON(json, name) {
+var assert = require( 'assert' )
+  , fs = require( 'fs' )
+  , processJSON = require( './bin/process_json' )
+  , writeCPP = require( './bin/write_cpp' )
+  , makeModel = require( './bin/model' );
 
-    var result = {
-            "null": [],
-            "boolean": [],
-            number: [],
-            string: [],
-            object: [],
-            array: []
-          };
+assert( typeof makeModel !== 'undefined' );
+assert( typeof processJSON !== 'undefined' );
+assert( typeof writeCPP !== 'undefined' );
 
-    traverse( json, function(o, next) {
-        var name = Object.keys(o)[0]
-          , value = o[name]
-          , type = typeof value;
-        
-        if (type == 'object') {
-            if (Array.isArray(value)) {
-                type = 'array';
-            } 
-            else if (value == null) {
-                type = 'null';
-            }
-        }
-        result[type].push({name: name, value: value});
-        next();
-    } )
+function translate(pathJSON) {
+  fs.readFile(pathJSON, function(err, data) {
+    var model = makeModel();
+    if (err) throw err;
+    processJSON(
+      JSON.parse(data.toString()),
+      function(type, name, value) {
+        model[type].push( { name: name, value: value} );
+      }
+    )
     .then( function() {
-        console.log( util.inspect( result ) );
-	t.end();
+      writeCPP(model, 'json' )
+      .then( function(source) { 
+        console.log( source ); 
+      });
     });
+  });
 }
 
-module.exports = processJSON;
+translate( './test2/data.json' );
