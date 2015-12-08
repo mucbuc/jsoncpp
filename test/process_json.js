@@ -4,15 +4,24 @@ var processJSON = require( '../bin/process_json' )
   , test = require( 'tape' )
   , Expector = require( 'expector' ).Expector;
 
-test( 'basic', function(t) {
-	var expector = new Expector( t );
+test( 'type names', function(t) {
+  var expector = new Expector( t );
 
-	expector.expect( 'number' );
+  checkType("boolean", false); 
+  checkType("number", 0);
+  checkType("string", "str");
+  checkType("null", null);
+  checkType("object", {});
+  checkType("array", []); 
+  expector.check();
+  
+  function checkType( type, value ) {
+    
+    expector.expect( 'done', { type: type, name: 'data', value: value } );
 
-	processJSON( { data: 0 }, function(info, next) {
-		expector.emit( info.type );
-		next();
-		expector.check();
-	});
+    processJSON( { data: value }, function(info, next) {
+      expector.emit( 'done', info );
+      next();
+    });
+  }
 });
-
