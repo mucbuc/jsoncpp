@@ -1,4 +1,4 @@
-template <T = std::string, U = int>
+template <class T = std::string, class U = int>
 struct json
 {
   typedef T string_type;
@@ -11,7 +11,7 @@ struct json
   {
     std::nullptr_t _zippo;
     bool _right = true;
-    std::tuple<string_type, string_type> _strings = { 'hello', 'arrays' };
+    std::tuple<string_type, string_type> _strings = { "hello", "arrays" };
     template<class V>
     void traverse(V & h)
     {
@@ -21,7 +21,7 @@ struct json
     }
   };
   wtf_type _wtf = {};
-  std::tuple<string_type, string_type> _arr = { 3, false, 'something' };
+  std::tuple<int, bool, string_type> _arr = { 3, false, "something" };
   template<class V>
   void traverse(V & h)
   {
