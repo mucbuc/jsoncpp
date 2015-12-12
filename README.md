@@ -1,3 +1,8 @@
+##install
+```
+npm install -g jsoncpp
+```
+
 ##usage
 ```
 jsoncpp $input.json $output.h
