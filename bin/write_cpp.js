@@ -95,7 +95,8 @@ function writeCPPInternal( json, name ) {
             nextArray();
           });
         })
-        .then( nextType );
+        .then( nextType )
+        .catch( nextType ); 
         break;
       case "string":
       case "number":
