@@ -17,7 +17,7 @@ function writeCPP( json, name ) {
         , writer = new Writer();
 
       result += writer.includeGuardBegin();
-      result += writer.defineTemplateClassBegin( '<T = std::string, U = int>', name );
+      result += writer.defineTemplateClassBegin( '<class T = std::string, class U = int>', name );
       result += writer.write( 'typedef T string_type;' );
       result += writer.write( 'typedef U number_type;' );
       result += writer.write( content );
