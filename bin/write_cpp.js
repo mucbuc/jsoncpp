@@ -74,9 +74,11 @@ function writeCPPInternal( json, name ) {
 
           var types = []
             , initList = [];
-          traverse( array, function(type, nextType) {
+          console.log( util.inspect(array.value) );
+
+          traverse( array.value, function(type, nextType) {
             //var mapped = mapType(typeof type);
-            //console.log( util.inspet(type) );
+            console.log( '*', util.inspect(type) );
             types.push( typeof type );
             if (type === 'string') {
               initList.push( '"' + value + '"' );
