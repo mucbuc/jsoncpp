@@ -17,7 +17,7 @@ function writeCPP( json, name ) {
         , writer = new Writer();
 
       result += writer.includeGuardBegin();
-      result += writer.defineTemplateClassBegin( '<T = std::string, U = int>', name );
+      result += writer.defineTemplateClassBegin( '<class T = std::string, class U = int>', name );
       result += writer.write( 'typedef T string_type;' );
       result += writer.write( 'typedef U number_type;' );
       result += writer.write( content );
@@ -72,15 +72,26 @@ function writeCPPInternal( json, name ) {
       case "array": 
         traverse( value, function( array, nextArray) {
 
-          var types = [];
-          traverse( array, function(type, nextType) {
-            types.push( mapType(typeof key) );
+          var types = []
+            , initList = [];
+          console.log( util.inspect(array.value) );
+
+          traverse( array.value, function(type, nextType) {
+            var mapped = mapType(typeof type);
+            
+            types.push( mapped );
+            if (mapped === 'string_type') {
+              initList.push( '"' + type + '"' );
+            }
+            else {
+              initList.push( type );
+            }
             nextType();
           })
           .then( function() {
             content += writer.write( 'std::tuple<' + types.join(', ') 
                + '> ' + writer.mangle( array.name ) 
-               + ' = {' + util.inspect( array.value).slice(1,-1) + '};' );
+               + ' = {' + initList.join( ', ' ) + '};' );
             members.push( array.name ); 
             nextArray();
           });
