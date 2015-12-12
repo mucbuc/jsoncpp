@@ -11,7 +11,7 @@ assert( typeof processJSON !== 'undefined' );
 assert( typeof writeCPP !== 'undefined' );
 
 if (process.argv.length < 4) {
-  console.log( 'usage: $input.json $output.h' ); 
+  console.log( 'usage: cppjson $input.json $output.h' ); 
 }
 else {
   var pathFixed = process.argv[2].replace( /[\/\\\.]/g, '_' )
