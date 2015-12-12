@@ -77,14 +77,14 @@ function writeCPPInternal( json, name ) {
           console.log( util.inspect(array.value) );
 
           traverse( array.value, function(type, nextType) {
-            //var mapped = mapType(typeof type);
-            console.log( '*', util.inspect(type) );
-            types.push( typeof type );
-            if (type === 'string') {
-              initList.push( '"' + value + '"' );
+            var mapped = mapType(typeof type);
+            
+            types.push( mapped );
+            if (mapped === 'string_type') {
+              initList.push( '"' + type + '"' );
             }
             else {
-              initList.push( value );
+              initList.push( type );
             }
             nextType();
           })
