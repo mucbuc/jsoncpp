@@ -74,8 +74,7 @@ function writeCPPInternal( json, name ) {
 
           var types = []
             , initList = [];
-          console.log( util.inspect(array.value) );
-
+          
           traverse( array.value, function(type, nextType) {
             var mapped = mapType(typeof type);
             
