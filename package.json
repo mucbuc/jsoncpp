@@ -1,7 +1,7 @@
 {
   "name": "jsoncpp",
-  "version": "0.0.0",
-  "description": "json to cpp",
+  "version": "0.0.1",
+  "description": "json to cpp translator",
   "main": "index.js",
   "directories": {
     "test": "test"
@@ -13,7 +13,7 @@
     "type": "git",
     "url": "git+https://github.com/mucbuc/jsoncpp.git"
   },
-  "author": "",
+  "author": "mbusenitz@gmail.com",
   "license": "GPL-2.0",
   "bugs": {
     "url": "https://github.com/mucbuc/jsoncpp/issues"
@@ -24,5 +24,8 @@
     "traverjs": "*",
     "expector": "*",
     "promise": "*"
-  }
+  },
+  "bin": "./index.js",
+  "preferGlobal": true,
+  "keywords": [ "json", "c++", "cpp", "converter", "translator" ]
 }
