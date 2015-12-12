@@ -6,8 +6,11 @@
 
 #include "test.h"
 
+
+#include "sample.h" // does it compile??? test enough
+
 template<class T = std::string, class U = int>
-struct json
+struct json2
 {
     typedef T string_type;
     typedef U number_type;
@@ -99,7 +102,7 @@ struct handler_type
 
 int main(int argc, const char * argv[])
 {
-    json<std::string, unsigned> instance;
+    json2<std::string, unsigned> instance;
     ASSERT( instance._wrong );
     ASSERT( instance._wtf._right );
     

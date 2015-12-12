@@ -1,5 +1,6 @@
 {
 	"sources": [
-		"src/main.cpp"
+		"src/main.cpp",
+		"src/sample.h"
 	]
 }
