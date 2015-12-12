@@ -3,11 +3,9 @@ var assert = require( 'assert' )
   , Promise = require( 'promise' );
 
 function processJSON(json, cb) {
-
   assert( typeof cb !== 'undefined' );
 
   return new Promise( function(resolve, reject) {
-    
     traverse( json, function(o, next) {
       var name = Object.keys(o)[0]
         , value = o[name]

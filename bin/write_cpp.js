@@ -72,15 +72,24 @@ function writeCPPInternal( json, name ) {
       case "array": 
         traverse( value, function( array, nextArray) {
 
-          var types = [];
+          var types = []
+            , initList = [];
           traverse( array, function(type, nextType) {
-            types.push( mapType(typeof key) );
+            //var mapped = mapType(typeof type);
+            //console.log( util.inspet(type) );
+            types.push( typeof type );
+            if (type === 'string') {
+              initList.push( '"' + value + '"' );
+            }
+            else {
+              initList.push( value );
+            }
             nextType();
           })
           .then( function() {
             content += writer.write( 'std::tuple<' + types.join(', ') 
                + '> ' + writer.mangle( array.name ) 
-               + ' = {' + util.inspect( array.value).slice(1,-1) + '};' );
+               + ' = {' + initList.join( ', ' ) + '};' );
             members.push( array.name ); 
             nextArray();
           });
