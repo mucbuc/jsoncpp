@@ -10,7 +10,10 @@ assert( typeof makeModel !== 'undefined' );
 assert( typeof processJSON !== 'undefined' );
 assert( typeof writeCPP !== 'undefined' );
 
-if (process.argv.length < 4) {
+if (module.parent) {
+  module.exports = translate;
+}
+else if (process.argv.length < 4) {
   console.log( 'usage: cppjson $input.json $output.h' ); 
 }
 else {
