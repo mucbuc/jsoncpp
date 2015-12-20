@@ -1,13 +1,13 @@
 {
   "name": "jsoncpp",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "json to cpp translator",
   "main": "index.js",
   "directories": {
     "test": "test"
   },
   "scripts": {
-    "test": "node test/test.js; node test2/test.js;"
+    "test": "node test/index.js; node test/process_json.js; node test2/test.js;"
   },
   "repository": {
     "type": "git",
