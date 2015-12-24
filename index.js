@@ -17,17 +17,9 @@ else if (process.argv.length < 4) {
   console.log( 'usage: cppjson $input.json $output.h' ); 
 }
 else {
-  var pathFixed = process.argv[2].replace( /[\/\\\.]/g, '_' )
-    , guard = (pathFixed + '_' + Math.random().toString(36).substr(2)).toUpperCase(); // remove '_json' part
-
+  
   translate( process.argv[2], function(source) {
-    var name = pathFixed.substr(0, pathFixed.length - 5)
-      , result = '';
-    result += '#ifndef ' + guard + '\n';
-    result += '#define ' + guard + '\n';
-    result += 'namespace static_port_' + name + '\n{\n';
-    result += source + '\n';
-    result += '}\n#endif';
+
 
     fs.writeFile( process.argv[3], result ); 
   });
@@ -47,7 +39,18 @@ function translate(pathJSON, cb) {
     .then( function() {
       writeCPP(model, 'json' )
       .then( function(source) { 
-        cb( source ); 
+        var pathFixed = pathJSON.replace( /[\/\\\.]/g, '_' )
+          , guard = (pathFixed + '_' + Math.random().toString(36).substr(2)).toUpperCase() // remove '_json' part 
+          , name = pathFixed.substr(0, pathFixed.length - 5)
+          , result = '';
+    
+        result += '#ifndef ' + guard + '\n';
+        result += '#define ' + guard + '\n';
+        result += 'namespace static_port_' + name + '\n{\n';
+        result += source + '\n';
+        result += '}\n#endif';
+
+        cb( result ); 
       });
     });
   });

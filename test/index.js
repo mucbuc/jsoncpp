@@ -15,6 +15,12 @@ test( 'smoke', function(t) {
     expector.expect( data.toString() );
   
     translate( 'test2/data.json', function(result) {
+      result = result.toString();
+      for (var i = 0; i < 2; ++i) 
+      {
+        result = result.substring( result.indexOf('\n') + 1 );
+      }
+
       expector.emit( result.toString() );
       expector.check();
     } );
