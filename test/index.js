@@ -21,8 +21,6 @@ test( 'smoke', function(t) {
         result = result.substring( result.indexOf('\n') + 1 );
       }
 
-      console.log( result );
-
       expector.emit( result.toString() );
       expector.check();
     } );
