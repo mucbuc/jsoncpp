@@ -19,9 +19,7 @@ else if (process.argv.length < 4) {
 else {
   
   translate( process.argv[2], function(source) {
-
-
-    fs.writeFile( process.argv[3], result ); 
+    fs.writeFile( process.argv[3], source ); 
   });
 }
 
