@@ -14,14 +14,12 @@ if (module.parent) {
   module.exports = translate;
 }
 else if (process.argv.length < 4) {
-  console.log( 'usage: cppjson $input.json $output.h' ); 
+  console.log( 'usage: jsoncpp $input.json $output.h' ); 
 }
 else {
   
   translate( process.argv[2], function(source) {
-
-
-    fs.writeFile( process.argv[3], result ); 
+    fs.writeFile( process.argv[3], source ); 
   });
 }
 
