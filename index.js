@@ -14,7 +14,7 @@ if (module.parent) {
   module.exports = translate;
 }
 else if (process.argv.length < 4) {
-  console.log( 'usage: cppjson $input.json $output.h' ); 
+  console.log( 'usage: jsoncpp $input.json $output.h' ); 
 }
 else {
   
