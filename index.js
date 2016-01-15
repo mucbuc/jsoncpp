@@ -4,7 +4,8 @@ var assert = require( 'assert' )
   , fs = require( 'fs' )
   , processJSON = require( './bin/process_json' )
   , writeCPP = require( './bin/write_cpp' )
-  , makeModel = require( './bin/model' );
+  , makeModel = require( './bin/model' )
+  , path = require( 'path' );
 
 assert( typeof makeModel !== 'undefined' );
 assert( typeof processJSON !== 'undefined' );
@@ -25,7 +26,8 @@ else {
 
 function translate(pathJSON, cb) {
   fs.readFile(pathJSON, function(err, data) {
-    var model = makeModel();
+    var model = makeModel()
+      , pathRel = path.join( path.basename( path.dirname( pathJSON ) ), path.basename( pathJSON ) ); 
     if (err) throw err;
     processJSON(
       JSON.parse(data.toString()),
@@ -37,7 +39,7 @@ function translate(pathJSON, cb) {
     .then( function() {
       writeCPP(model, 'json' )
       .then( function(source) { 
-        var pathFixed = pathJSON.replace( /[\/\\\.]/g, '_' )
+        var pathFixed = pathRel.replace( /[\/\\\.]/g, '_' )
           , guard = (pathFixed + '_' + Math.random().toString(36).substr(2)).toUpperCase() // remove '_json' part 
           , name = pathFixed.substr(0, pathFixed.length - 5)
           , result = '';
