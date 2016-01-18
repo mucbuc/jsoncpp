@@ -25,7 +25,7 @@ test.skip( 'smoke', function(t) {
   });
 });
 
-test.only( 'array', function(t) {
+test( 'array', function(t) {
 
   var expector = new Expector(t);
 
@@ -43,5 +43,13 @@ test.only( 'array', function(t) {
       expector.emit( result.toString() );
       expector.check();
     });
+  });
+});
+
+test.only( 'object_array', function(t) {
+  translate( 'test/object_array.json', function(result) {
+    console.log( result.toString() );
+    t.pass();
+    t.end();
   });
 });
