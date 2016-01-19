@@ -45,10 +45,12 @@ function writeCPPInternal( json, name ) {
       switch (key) 
       {
       case "object": 
-        writeObject().then( nextType ).catch( nextType );
+        writeObject(value)
+        .then( nextType ).catch( nextType );
         break;
       case "array": 
-        writeArray().then( nextType ).catch( nextType ); 
+        writeArray(value)
+        .then( nextType ).catch( nextType ); 
         break;
       case "string":
       case "number":
@@ -75,58 +77,6 @@ function writeCPPInternal( json, name ) {
       default:
         nextType();
       };
-
-      function writeObject() {
-        return traverse( value, function( object, nextObject ) {
-          var model = makeModel();
-          processJSON(
-            object.value,
-            function(info, next) {
-              model[info.type].push( { name: info.name, value: info.value} );
-              next();
-            })
-          .then( function() {
-            var typeName = mapType( object.name );
-            writeCPPInternal( model, typeName )
-            .then( function(nested) {
-              content += writer.defineStructBegin( typeName ); 
-              content += writer.write(nested);
-              content += writer.defineStructEnd();
-              content += writer.write(typeName + ' ' + writer.mangle( object.name ) + ' = {};' );
-              members.push( object.name ); 
-              nextObject(); 
-            } );
-          });
-        });
-      }
-
-      function writeArray() { 
-        return traverse( value, function( array, nextArray) {
-
-          var types = []
-            , initList = [];
-          
-          traverse( array.value, function(type, nextType) {
-            var mapped = mapType(typeof type);
-            
-            types.push( mapped );
-            if (mapped === 'string_type') {
-              initList.push( '"' + type + '"' );
-            }
-            else {
-              initList.push( type );
-            }
-            nextType();
-          })
-          .then( function() {
-            content += writer.write( 'std::tuple<' + types.join(', ') 
-               + '> ' + writer.mangle( array.name ) 
-               + ' = {' + initList.join( ', ' ) + '};' );
-            members.push( array.name ); 
-            nextArray();
-          });
-        })
-      }
     })
     .then(function() {
       content += writer.write( 'template<class V>' );
@@ -139,6 +89,57 @@ function writeCPPInternal( json, name ) {
       resolve(content);
     });
 
+    function writeObject(value) {
+      return traverse( value, function( object, nextObject ) {
+        var model = makeModel();
+        processJSON(
+          object.value,
+          function(info, next) {
+            model[info.type].push( { name: info.name, value: info.value} );
+            next();
+          })
+        .then( function() {
+          var typeName = mapType( object.name );
+          writeCPPInternal( model, typeName )
+          .then( function(nested) {
+            content += writer.defineStructBegin( typeName ); 
+            content += writer.write(nested);
+            content += writer.defineStructEnd();
+            content += writer.write(typeName + ' ' + writer.mangle( object.name ) + ' = {};' );
+            members.push( object.name ); 
+            nextObject(); 
+          } );
+        });
+      });
+    }
+
+    function writeArray(value) { 
+      return traverse( value, function( array, nextArray) {
+
+        var types = []
+          , initList = [];
+        
+        traverse( array.value, function(type, nextType) {
+          var mapped = mapType(typeof type);
+          
+          types.push( mapped );
+          if (mapped === 'string_type') {
+            initList.push( '"' + type + '"' );
+          }
+          else {
+            initList.push( type );
+          }
+          nextType();
+        })
+        .then( function() {
+          content += writer.write( 'std::tuple<' + types.join(', ') 
+             + '> ' + writer.mangle( array.name ) 
+             + ' = {' + initList.join( ', ' ) + '};' );
+          members.push( array.name ); 
+          nextArray();
+        });
+      })
+    }
   });
 
   function mapType(type) {
