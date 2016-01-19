@@ -5,7 +5,7 @@ var Expector = require( 'expector' ).Expector
   , fs = require( 'fs' )
   , translate = require( '../index.js' );
 
-test.skip( 'smoke', function(t) {
+test( 'smoke', function(t) {
   var expector = new Expector(t);
 
   fs.readFile( 'test/src/sample.h', function(err, data) {
@@ -46,7 +46,7 @@ test( 'array', function(t) {
   });
 });
 
-test.only( 'object_array', function(t) {
+test( 'object_array', function(t) {
   translate( 'test/object_array.json', function(result) {
     console.log( result.toString() );
     t.pass();
