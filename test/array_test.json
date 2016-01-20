@@ -1,0 +1,6 @@
+{
+	"sources": [
+		"src/array_main.cpp",
+		"src/object_array.h"
+	]
+}
