@@ -25,10 +25,14 @@ else {
 
 function translateFile(pathJSON, cb) {
   fs.readFile(pathJSON, function(err, data) {
+    var pathRel; 
     if (err) throw err;
+    pathRel = path.join( 
+      path.basename( path.dirname( pathJSON ) ), 
+      path.basename( pathJSON ) 
+    );
     translate(
       JSON.parse(data.toString()), 
-      pathJSON, 
       function(source) {
         var pathFixed = pathRel.replace( /[\/\\\.]/g, '_' )
           , guard = (pathFixed + '_' + Math.random().toString(36).substr(2)).toUpperCase() // remove '_json' part 
@@ -47,12 +51,8 @@ function translateFile(pathJSON, cb) {
   });
 }
 
-function translate(json, pathJSON, cb ) {
-  var model = makeModel()
-    , pathRel = path.join( 
-        path.basename( path.dirname( pathJSON ) ), 
-        path.basename( pathJSON ) 
-      );    
+function translate(json, cb) {
+  var model = makeModel();   
   processJSON(
     json,
     function(info, next) {
@@ -61,7 +61,7 @@ function translate(json, pathJSON, cb ) {
     }
   )
   .then( function() {
-    writeCPP(model, 'json' )
+    writeCPP(model, 'json', translate )
     .then( function(source) { 
       cb(source);
     });

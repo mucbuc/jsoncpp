@@ -16,7 +16,8 @@ function Writer(tabInit)
   };
 
   this.write = function( text ) {
-    return instance.tabs(tabCount) + text.replace( /\n/g,  instance.tabs(tabCount) );
+    return instance.tabs(tabCount) 
+        + text.replace( /\n/g, instance.tabs(tabCount) );
   };
 
   this.defineTemplateClassBegin = function( template, name ) {

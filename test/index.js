@@ -15,7 +15,7 @@ test( 'smoke', function(t) {
   
     fs.readFile(jsonPath, function(err, data) {
       if (err) throw err; 
-      translate( JSON.parse(data.toString()), jsonPath, function(result) {
+      translate( JSON.parse(data.toString()), function(result) {
         expector.emit( result.toString() );
         expector.check();
       });
@@ -33,7 +33,7 @@ test( 'array', function(t) {
     expector.expect( data.toString() );
     fs.readFile(jsonPath, function(err,data) {
       if (err) throw err;
-      translate( JSON.parse(data.toString()), jsonPath, function(result) {
+      translate( JSON.parse(data.toString()), function(result) {
         expector.emit( result.toString() );
         expector.check();
       });
@@ -46,7 +46,7 @@ test.skip( 'object_array', function(t) {
   fs.readFile( jsonPath, function(err, data) {
     if (err) throw err; 
 
-    translate( JSON.parse(data.toString()), jsonPath, function(result) {
+    translate( JSON.parse(data.toString()), function(result) {
       console.log( result.toString() );
       t.pass();
       t.end();

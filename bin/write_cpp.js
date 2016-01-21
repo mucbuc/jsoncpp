@@ -9,9 +9,9 @@ var assert = require( 'assert' )
 assert( typeof processJSON !== 'undefined' ); 
 assert( typeof Writer !== 'undefined' );
 
-function writeCPP( json, name ) {
+function writeCPP( json, name, translate ) {
   return new Promise( function(resolve, reject) {
-    writeCPPInternal( json, name )
+    writeCPPInternal( json, name, translate )
     .then( function(content) {
       var result = ''
         , writer = new Writer();
@@ -27,7 +27,7 @@ function writeCPP( json, name ) {
   });
 }
 
-function writeCPPInternal( json, name ) {
+function writeCPPInternal( json, name, translate ) {
   
   return new Promise( function(resolve, reject) {
 
@@ -118,14 +118,22 @@ function writeCPPInternal( json, name ) {
           , initList = [];
         
         traverse( array.value, function(type, nextType) {
-          var mapped = mapType(typeof type);
-          
-          types.push( mapped );
-          if (mapped === 'string_type') {
-            initList.push( '"' + type + '"' );
+          if (typeof type === 'object') {
+            translate( )
+            content += write.write( "struct custom_type;\n" ); 
+            types.push( "custom_type" );
+            initList.push( "custom_init" );
           }
           else {
-            initList.push( type );
+            var mapped = mapType(typeof type);
+            
+            types.push( mapped );
+            if (mapped === 'string_type') {
+              initList.push( '"' + type + '"' );
+            }
+            else {
+              initList.push( type );
+            }
           }
           nextType();
         })
