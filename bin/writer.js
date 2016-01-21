@@ -34,14 +34,6 @@ function Writer(tabInit)
     return instance.close() + ';';
   };
 
-  this.includeGuardBegin = function() {
-    return '';
-  };
-
-  this.includeGuardEnd = function() {
-    return '';
-  };
-
   this.mangle = function(source) {
     return '_' + source;
   };
