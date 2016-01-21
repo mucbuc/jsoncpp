@@ -26,7 +26,24 @@ else {
 function translateFile(pathJSON, cb) {
   fs.readFile(pathJSON, function(err, data) {
     if (err) throw err;
-    translate(JSON.parse(data.toString()), pathJSON, cb);
+    translate(
+      JSON.parse(data.toString()), 
+      pathJSON, 
+      function(source) {
+        var pathFixed = pathRel.replace( /[\/\\\.]/g, '_' )
+          , guard = (pathFixed + '_' + Math.random().toString(36).substr(2)).toUpperCase() // remove '_json' part 
+          , name = pathFixed.substr(0, pathFixed.length - 5)
+          , result = '';
+  
+        result += '#ifndef ' + guard + '\n';
+        result += '#define ' + guard + '\n';
+        result += 'namespace static_port_' + name + '\n{\n';
+        result += source + '\n';
+        result += '}\n#endif';
+
+        cb( result ); 
+      }
+    );
   });
 }
 
@@ -46,18 +63,7 @@ function translate(json, pathJSON, cb ) {
   .then( function() {
     writeCPP(model, 'json' )
     .then( function(source) { 
-      var pathFixed = pathRel.replace( /[\/\\\.]/g, '_' )
-        , guard = (pathFixed + '_' + Math.random().toString(36).substr(2)).toUpperCase() // remove '_json' part 
-        , name = pathFixed.substr(0, pathFixed.length - 5)
-        , result = '';
-  
-      result += '#ifndef ' + guard + '\n';
-      result += '#define ' + guard + '\n';
-      result += 'namespace static_port_' + name + '\n{\n';
-      result += source + '\n';
-      result += '}\n#endif';
-
-      cb( result ); 
+      cb(source);
     });
   });
 }

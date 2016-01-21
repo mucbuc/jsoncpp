@@ -1,5 +1,3 @@
-namespace static_port_test_array
-{
 template <class T = std::string, class U = int>
 struct json
 {
@@ -12,5 +10,3 @@ struct json
     h( "entries", _entries);
   }
 };
-}
-#endif

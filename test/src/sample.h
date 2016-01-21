@@ -1,5 +1,3 @@
-namespace static_port_test2_data
-{
 template <class T = std::string, class U = int>
 struct json
 {
@@ -35,5 +33,3 @@ struct json
     h( "arr", _arr);
   }
 };
-}
-#endif
