@@ -9,16 +9,21 @@ var assert = require( 'assert' )
 assert( typeof processJSON !== 'undefined' ); 
 assert( typeof Writer !== 'undefined' );
 
-function writeCPP( json, name, translate ) {
+function writeCPP( json, name, translate, internal ) {
   return new Promise( function(resolve, reject) {
     writeCPPInternal( json, name, translate )
     .then( function(content) {
       var result = ''
         , writer = new Writer();
 
-      result += writer.defineTemplateClassBegin( '<class T = std::string, class U = int>', name );
-      result += writer.write( 'typedef T string_type;' );
-      result += writer.write( 'typedef U number_type;' );
+      if (typeof internal === 'undefined') {
+        result += writer.defineTemplateClassBegin( '<class T = std::string, class U = int>', name );
+        result += writer.write( 'typedef T string_type;' );
+        result += writer.write( 'typedef U number_type;' );
+      }
+      else {
+        result += writer.defineStructBegin( name );
+      }
       result += writer.write( content );
       result += writer.defineStructEnd();
       resolve( result );
@@ -119,8 +124,12 @@ function writeCPPInternal( json, name, translate ) {
         
         traverse( array.value, function(type, nextType) {
           if (typeof type === 'object') {
-            translate( )
-            content += write.write( "struct custom_type;\n" ); 
+            translate(type, function(source) {
+              content += writer.write( source );
+              nextType();
+            }, 
+            true);
+             
             types.push( "custom_type" );
             initList.push( "custom_init" );
           }
@@ -134,8 +143,8 @@ function writeCPPInternal( json, name, translate ) {
             else {
               initList.push( type );
             }
+            nextType();
           }
-          nextType();
         })
         .then( function() {
           content += writer.write( 'std::tuple<' + types.join(', ') 

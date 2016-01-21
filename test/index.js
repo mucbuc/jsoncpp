@@ -41,7 +41,7 @@ test( 'array', function(t) {
   });
 });
 
-test.skip( 'object_array', function(t) {
+test.only( 'object_array', function(t) {
   var jsonPath =  'test/object_array.json'
   fs.readFile( jsonPath, function(err, data) {
     if (err) throw err; 

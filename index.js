@@ -51,7 +51,7 @@ function translateFile(pathJSON, cb) {
   });
 }
 
-function translate(json, cb) {
+function translate(json, cb, internal) {
   var model = makeModel();   
   processJSON(
     json,
@@ -61,7 +61,7 @@ function translate(json, cb) {
     }
   )
   .then( function() {
-    writeCPP(model, 'json', translate )
+    writeCPP(model, 'json', translate, internal )
     .then( function(source) { 
       cb(source);
     });
