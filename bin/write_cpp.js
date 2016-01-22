@@ -4,7 +4,8 @@ var assert = require( 'assert' )
   , Promise = require( 'promise' )
   , processJSON = require( './process_json' )
   , Writer = require( './writer' )
-  , makeModel = require( './model' );
+  , makeModel = require( './model' )
+  , crypto = require( 'crypto' );
 
 assert( typeof processJSON !== 'undefined' ); 
 assert( typeof Writer !== 'undefined' );
@@ -20,12 +21,13 @@ function writeCPP( json, name, translate, internal ) {
         result += writer.defineTemplateClassBegin( '<class T = std::string, class U = int>', name );
         result += writer.write( 'typedef T string_type;' );
         result += writer.write( 'typedef U number_type;' );
+        result += writer.write( content );
+        result += writer.defineStructEnd();
       }
       else {
-        result += writer.defineStructBegin( name );
+        result += writer.write( content );
       }
-      result += writer.write( content );
-      result += writer.defineStructEnd();
+
       resolve( result );
     })
     .catch( reject );
@@ -125,13 +127,14 @@ function writeCPPInternal( json, name, translate ) {
         traverse( array.value, function(type, nextType) {
           if (typeof type === 'object') {
             translate(type, function(source) {
+              var name = 'json' + crypto.createHash('md5').update(source).digest('hex'); 
+              content += writer.defineStructBegin( name );
               content += writer.write( source );
+              content += writer.defineStructEnd();
+              types.push( name );
               nextType();
             }, 
             true);
-             
-            types.push( "custom_type" );
-            initList.push( "custom_init" );
           }
           else {
             var mapped = mapType(typeof type);
@@ -149,7 +152,7 @@ function writeCPPInternal( json, name, translate ) {
         .then( function() {
           content += writer.write( 'std::tuple<' + types.join(', ') 
              + '> ' + writer.mangle( array.name ) 
-             + ' = {' + initList.join( ', ' ) + '};' );
+             + ' = {' + initList.join( ', ' ) + '};');
           members.push( array.name ); 
           nextArray();
         });

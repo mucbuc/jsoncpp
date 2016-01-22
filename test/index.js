@@ -41,15 +41,21 @@ test( 'array', function(t) {
   });
 });
 
-test.only( 'object_array', function(t) {
-  var jsonPath =  'test/object_array.json'
-  fs.readFile( jsonPath, function(err, data) {
-    if (err) throw err; 
+test( 'object_array', function(t) {
 
-    translate( JSON.parse(data.toString()), function(result) {
-      console.log( result.toString() );
-      t.pass();
-      t.end();
+  var expector = new Expector(t);
+
+  fs.readFile( 'test/src/object_array.h', function(err, data) {
+    var jsonPath =  'test/object_array.json'
+    if (err) throw err; 
+    expector.expect( data.toString() );
+    fs.readFile( jsonPath, function(err, data) {
+      if (err) throw err;
+      translate( JSON.parse(data.toString()), function(result) {
+        console.log( result.toString() );
+        expector.emit( result.toString() );
+        expector.check();
+      });
     });
   });
 });
