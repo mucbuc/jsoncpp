@@ -18,32 +18,27 @@ else if (process.argv.length < 4) {
   console.log( 'usage: jsoncpp $input.json $output.h' ); 
 }
 else {
-  
-  translate( process.argv[2], function(source) {
+  translateFile( process.argv[2], function(source) {
     fs.writeFile( process.argv[3], source ); 
   });
 }
 
-function translate(pathJSON, cb) {
+function translateFile(pathJSON, cb) {
   fs.readFile(pathJSON, function(err, data) {
-    var model = makeModel()
-      , pathRel = path.join( path.basename( path.dirname( pathJSON ) ), path.basename( pathJSON ) ); 
+    var pathRel; 
     if (err) throw err;
-    processJSON(
-      JSON.parse(data.toString()),
-      function(info, next) {
-        model[info.type].push( { name: info.name, value: info.value} );
-        next();
-      }
-    )
-    .then( function() {
-      writeCPP(model, 'json' )
-      .then( function(source) { 
+    pathRel = path.join( 
+      path.basename( path.dirname( pathJSON ) ), 
+      path.basename( pathJSON ) 
+    );
+    translate(
+      JSON.parse(data.toString()), 
+      function(source) {
         var pathFixed = pathRel.replace( /[\/\\\.]/g, '_' )
           , guard = (pathFixed + '_' + Math.random().toString(36).substr(2)).toUpperCase() // remove '_json' part 
           , name = pathFixed.substr(0, pathFixed.length - 5)
           , result = '';
-    
+  
         result += '#ifndef ' + guard + '\n';
         result += '#define ' + guard + '\n';
         result += 'namespace static_port_' + name + '\n{\n';
@@ -51,7 +46,24 @@ function translate(pathJSON, cb) {
         result += '}\n#endif';
 
         cb( result ); 
-      });
+      }
+    );
+  });
+}
+
+function translate(json, cb, internal) {
+  var model = makeModel();   
+  processJSON(
+    json,
+    function(info, next) {
+      model[info.type].push( { name: info.name, value: info.value} );
+      next();
+    }
+  )
+  .then( function() {
+    writeCPP(model, 'json', translate, internal )
+    .then( function(source) { 
+      cb(source);
     });
   });
 }

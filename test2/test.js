@@ -14,7 +14,7 @@ test( 'basic', function(t) {
         next();
       } )
     .then( function(result) {
-      console.log( util.inspect(result) );
+      //console.log( util.inspect(result) );
       t.pass();
       t.end();
     });
