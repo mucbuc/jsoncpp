@@ -12,7 +12,10 @@ assert( typeof processJSON !== 'undefined' );
 assert( typeof writeCPP !== 'undefined' );
 
 if (module.parent) {
-  module.exports = translate;
+  module.exports = {
+    translate : translate, 
+    translateFile: translateFile
+  };
 }
 else if (process.argv.length < 4) {
   console.log( 'usage: jsoncpp $input.json $output.h' ); 

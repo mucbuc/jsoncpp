@@ -3,7 +3,7 @@
 var Expector = require( 'expector' ).Expector
   , test = require( 'tape' )
   , fs = require( 'fs' )
-  , translate = require( '../index.js' );
+  , translate = require( '../index.js' ).translate;
 
 test( 'smoke', function(t) {
   var expector = new Expector(t);
