@@ -23,7 +23,8 @@
     "tape": "*",
     "traverjs": "*",
     "expector": "*",
-    "promise": "*"
+    "promise": "*",
+    "mkdir-recursive": "*"
   },
   "bin": "./index.js",
   "preferGlobal": true,
