@@ -4,7 +4,8 @@ var assert = require( 'assert' )
   , fs = require( 'fs' )
   , processJSON = require( './bin/process_json' )
   , writeCPP = require( './bin/write_cpp' )
-  , makeModel = require( './bin/model' );
+  , makeModel = require( './bin/model' )
+  , mr = require( 'mkdir-recursive');
 
 assert( typeof makeModel !== 'undefined' );
 assert( typeof processJSON !== 'undefined' );
@@ -19,7 +20,10 @@ else if (process.argv.length < 4) {
 else {
   
   translate( process.argv[2], function(source) {
-    fs.writeFile( process.argv[3], source ); 
+    mr.mkdir(process.argv[3], function(err) {
+      if (err) throw err;
+      fs.writeFile( process.argv[3], source ); 
+    });
   });
 }
 
