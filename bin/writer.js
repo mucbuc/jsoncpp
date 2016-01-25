@@ -16,7 +16,8 @@ function Writer(tabInit)
   };
 
   this.write = function( text ) {
-    return instance.tabs(tabCount) + text.replace( /\n/g,  instance.tabs(tabCount) );
+    return instance.tabs(tabCount) 
+        + text.replace( /\n/g, instance.tabs(tabCount) );
   };
 
   this.defineTemplateClassBegin = function( template, name ) {
@@ -32,14 +33,6 @@ function Writer(tabInit)
 
   this.defineStructEnd = function( name ) {
     return instance.close() + ';';
-  };
-
-  this.includeGuardBegin = function() {
-    return '';
-  };
-
-  this.includeGuardEnd = function() {
-    return '';
   };
 
   this.mangle = function(source) {
