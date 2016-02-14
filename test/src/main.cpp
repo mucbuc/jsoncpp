@@ -33,7 +33,7 @@ struct json2
     bool _wrong = true;
     nested_json _wtf = {};
     int _three = 3;
-    std::tuple< int, bool, string_type > _arr = { 3, false, "something" };
+    std::tuple< int, bool, string_type > _arr = std::make_tuple( 3, false, string_type("something") );
 
     template<class V>
     void traverse(V & h) const
