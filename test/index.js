@@ -8,7 +8,7 @@ var Expector = require( 'expector' ).Expector
 
 test( 'gcc build', function(t) {
   var expector = new Expector(t)
-    , child = cp.spawn( 'crimp', ['-g'], {stdio: 'pipe' } );
+    , child = cp.spawn( 'crimp', ['-g', './test/test.json' ], {stdio: 'pipe' } );
 
   expector.expectNot( 'error' ); 
   expector.expect( 'result', 0 );
