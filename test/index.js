@@ -3,7 +3,26 @@
 var Expector = require( 'expector' ).Expector
   , test = require( 'tape' )
   , fs = require( 'fs' )
-  , translate = require( '../index.js' ).translate;
+  , translate = require( '../index.js' ).translate
+  , cp = require( 'child_process' );
+
+test( 'gcc build', function(t) {
+  var expector = new Expector(t)
+    , child = cp.spawn( 'crimp', ['-g'], {stdio: 'pipe' } );
+
+  expector.expectNot( 'error' ); 
+  expector.expect( 'result', 0 );
+
+  child.on( 'error', function() {
+    expector.emit( 'error' ); 
+  });
+
+  child.on( 'exit', function(code) {
+    expector.emit( 'result', code );
+    expector.check(); 
+  });
+
+});
 
 test( 'smoke', function(t) {
   var expector = new Expector(t);

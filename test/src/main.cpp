@@ -4,7 +4,7 @@
 #include <vector>
 #include <typeinfo>
 
-#include "test.h"
+#include <tmp/src/test.h>
 
 
 #include "sample.h" // does it compile??? test enough
