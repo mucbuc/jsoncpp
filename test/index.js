@@ -6,9 +6,9 @@ var Expector = require( 'expector' ).Expector
   , translate = require( '../index.js' ).translate
   , cp = require( 'child_process' );
 
-test( 'gcc build', function(t) {
+test.only( 'gcc build', function(t) {
   var expector = new Expector(t)
-    , child = cp.spawn( 'crimp', ['-g', './test/test.json' ], {stdio: 'pipe' } );
+    , child = cp.spawn( 'crimp', ['-g', './test/test.json' ], {stdio: 'inherit' } );
 
   expector.expectNot( 'error' ); 
   expector.expect( 'result', 0 );

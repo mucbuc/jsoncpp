@@ -18,7 +18,7 @@ struct json2
     struct nested_json 
     {
         bool _right = true;
-        std::tuple< string_type, string_type > _strings = { "hello", "arrays" };
+        std::tuple< string_type, string_type > _strings = std::tuple< string_type, string_type >{ "hello", "arrays" };
         std::nullptr_t _zippo;
         
         template<class V>
