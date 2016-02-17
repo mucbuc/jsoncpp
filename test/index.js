@@ -60,7 +60,7 @@ test( 'array', function(t) {
   });
 });
 
-test.only( 'object_array', function(t) {
+test( 'object_array', function(t) {
 
   var expector = new Expector(t);
 
