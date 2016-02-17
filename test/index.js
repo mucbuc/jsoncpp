@@ -24,7 +24,7 @@ test( 'gcc build', function(t) {
 
 });
 
-test( 'smoke', function(t) {
+test.skip( 'smoke', function(t) {
   var expector = new Expector(t);
 
   fs.readFile( 'test/src/sample.h', function(err, data) {
@@ -60,7 +60,7 @@ test( 'array', function(t) {
   });
 });
 
-test( 'object_array', function(t) {
+test.only( 'object_array', function(t) {
 
   var expector = new Expector(t);
 
@@ -71,6 +71,7 @@ test( 'object_array', function(t) {
     fs.readFile( jsonPath, function(err, data) {
       if (err) throw err;
       translate( JSON.parse(data.toString()), function(result) {
+        console.log( result.toString() ); 
         expector.emit( result.toString() );
         expector.check();
       });

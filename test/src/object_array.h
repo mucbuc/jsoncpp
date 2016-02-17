@@ -3,25 +3,25 @@ struct json
 {
   typedef T string_type;
   typedef U number_type;
-  struct jsonde03e3d25d87a2a51b8b1966c8c90a64
+  struct jsonc9db419dd88c3254dd1a3623cf5cfe7f
   {
-    std::tuple<string_type, string_type> _entries = {"hello", "more"};
+    std::tuple<string_type, string_type> _entries = std::make_tuple("hello", "more");
     template<class V>
     void traverse(V & h)
     {
       h( "entries", _entries);
     }
   };
-  struct json5b8ba0c6f7f58e381cd074f172492b2b
+  struct json1bfda7821b12e41750f079eb8f63103f
   {
-    std::tuple<string_type, string_type> _entries = {"hello", "more2"};
+    std::tuple<string_type, string_type> _entries = std::make_tuple("hello", "more2");
     template<class V>
     void traverse(V & h)
     {
       h( "entries", _entries);
     }
   };
-  std::tuple<jsonde03e3d25d87a2a51b8b1966c8c90a64, json5b8ba0c6f7f58e381cd074f172492b2b> _entries = {};
+  std::tuple<jsonc9db419dd88c3254dd1a3623cf5cfe7f, json1bfda7821b12e41750f079eb8f63103f> _entries;
   template<class V>
   void traverse(V & h)
   {

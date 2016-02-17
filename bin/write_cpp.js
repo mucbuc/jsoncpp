@@ -150,9 +150,10 @@ function writeCPPInternal( json, name, translate ) {
           }
         })
         .then( function() {
+          var initializer = initList.length ? ' = std::make_tuple(' + initList.join( ', ' ) + ')' : '';  
           content += writer.write( 'std::tuple<' + types.join(', ') 
              + '> ' + writer.mangle( array.name ) 
-             + ' = std::make_tuple(' + initList.join( ', ' ) + ');');
+             + initializer + ';' );
           members.push( array.name ); 
           nextArray();
         });
