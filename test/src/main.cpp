@@ -14,13 +14,13 @@ struct json2
 {
     typedef T string_type;
     typedef U number_type;
-    
+
     struct nested_json 
     {
         bool _right = true;
-        std::tuple< string_type, string_type > _strings = std::make_tuple( string_type("hello"), string_type("arrays") );
+        std::tuple< string_type, string_type > _strings = std::make_tuple( "hello", "arrays" );
         std::nullptr_t _zippo;
-        
+
         template<class V>
         void traverse(V & h) const
         {
@@ -29,11 +29,11 @@ struct json2
             h( "zippo", _zippo );
         }
     };
-    
+
     bool _wrong = true;
     nested_json _wtf = {};
     int _three = 3;
-    std::tuple< int, bool, string_type > _arr = std::make_tuple( 3, false, string_type("something") );
+    std::tuple< int, bool, string_type > _arr = std::make_tuple( 3, false, "something" );
 
     template<class V>
     void traverse(V & h) const
