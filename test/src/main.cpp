@@ -116,6 +116,8 @@ int main(int argc, const char * argv[])
     ASSERT( handler.m_tuple_int_bool_string_counter == 1 );
     ASSERT( handler.m_tuple_string_string_counter == 1 );
     ASSERT( handler.m_nulls.count( "zippo" ) );
+
+    json<> test_sampleDotH;
     
     return 0;
 }
