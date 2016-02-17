@@ -24,7 +24,7 @@ test( 'gcc build', function(t) {
 
 });
 
-test.skip( 'smoke', function(t) {
+test( 'smoke', function(t) {
   var expector = new Expector(t);
 
   fs.readFile( 'test/src/sample.h', function(err, data) {
