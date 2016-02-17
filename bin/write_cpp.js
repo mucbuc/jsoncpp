@@ -152,7 +152,7 @@ function writeCPPInternal( json, name, translate ) {
         .then( function() {
           content += writer.write( 'std::tuple<' + types.join(', ') 
              + '> ' + writer.mangle( array.name ) 
-             + ' = {' + initList.join( ', ' ) + '};');
+             + ' = std::make_tuple(' + initList.join( ', ' ) + ');');
           members.push( array.name ); 
           nextArray();
         });
