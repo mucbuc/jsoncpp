@@ -35,6 +35,7 @@ test( 'smoke', function(t) {
     fs.readFile(jsonPath, function(err, data) {
       if (err) throw err; 
       translate( JSON.parse(data.toString()), function(result) {
+        console.log( result.toString() );
         expector.emit( result.toString() );
         expector.check();
       });

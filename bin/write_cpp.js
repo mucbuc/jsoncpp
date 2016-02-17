@@ -68,7 +68,7 @@ function writeCPPInternal( json, name, translate ) {
             content += ';'
           }
           else if (key === "string") {
-            content += ' = "' + obj.value + '";';
+            content += ' = string_type("' + obj.value + '");';
           }
           else {
             content += ' = ' + obj.value + ';';
@@ -141,7 +141,7 @@ function writeCPPInternal( json, name, translate ) {
             
             types.push( mapped );
             if (mapped === 'string_type') {
-              initList.push( '"' + type + '"' );
+              initList.push( 'string_type("' + type + '")' );
             }
             else {
               initList.push( type );

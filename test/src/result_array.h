@@ -3,7 +3,7 @@ struct json
 {
   typedef T string_type;
   typedef U number_type;
-  std::tuple<string_type, string_type> _entries = std::make_tuple("hello", "more");
+  std::tuple<string_type, string_type> _entries = std::make_tuple(string_type("hello"), string_type("more"));
   template<class V>
   void traverse(V & h)
   {
