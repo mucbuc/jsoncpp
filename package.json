@@ -1,6 +1,6 @@
 {
   "name": "jsoncpp",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "description": "json to cpp translator",
   "main": "index.js",
   "directories": {
