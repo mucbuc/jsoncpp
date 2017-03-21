@@ -1,14 +1,14 @@
-##install
+##install  
 ```
 npm install -g jsoncpp
 ```
 
-##usage
+##usage  
 ```
 jsoncpp $input.json $output.h
 ```
 
-##example input
+##example input  
 ```
 {
     "wtf": { 
@@ -24,7 +24,7 @@ jsoncpp $input.json $output.h
 }   
 ```
 
-##example output
+##example output  
 
 ```
 #ifndef TEST2_DATA_JSON_LW9O5SXX0LLERK9
